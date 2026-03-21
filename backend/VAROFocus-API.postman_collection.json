@@ -1,0 +1,2201 @@
+{
+    "info": {
+        "name": "VAROFocus API",
+        "description": "Complete REST API collection for VAROFocus - Gamified Task Management Application",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "register"]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "  var jsonData = pm.response.json();",
+                                    "  pm.environment.set(\"token\", jsonData.data.token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "me"]
+                        }
+                    }
+                },
+                {
+                    "name": "Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/refresh-token",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "refresh-token"]
+                        }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "logout"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/users?limit=20&page=1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{user_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users", "{{user_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Updated\",\n  \"username\": \"johndoe\",\n  \"avatar_url\": \"https://example.com/avatar.jpg\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{user_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users", "{{user_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"current_password\": \"password123\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{user_id}}/update-password",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{user_id}}",
+                                "update-password"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{user_id}}/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users", "{{user_id}}", "stats"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Activity Feed",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{user_id}}/activity-feed?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{user_id}}",
+                                "activity-feed"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Top Users (Leaderboard)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/top-users",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users", "top-users"]
+                        }
+                    }
+                },
+                {
+                    "name": "Search Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/search?q=john&limit=10",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users", "search"],
+                            "query": [
+                                {
+                                    "key": "q",
+                                    "value": "john"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Categories",
+            "item": [
+                {
+                    "name": "Get All Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Category",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Work\",\n  \"description\": \"Work related tasks\",\n  \"color\": \"#FF0000\",\n  \"icon\": \"briefcase\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Category",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/{{category_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "{{category_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Category",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Work Updated\",\n  \"color\": \"#00FF00\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/{{category_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "{{category_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Category",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/{{category_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "{{category_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Default Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/defaults",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "defaults"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Default Categories",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/create-defaults",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "categories", "create-defaults"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Tasks",
+            "item": [
+                {
+                    "name": "Get All Tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks?limit=20&page=1&status=pending",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "pending"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Task",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Finish project proposal\",\n  \"description\": \"Complete Q1 project proposal\",\n  \"category_id\": \"{{category_id}}\",\n  \"difficulty\": \"medium\",\n  \"priority\": \"high\",\n  \"deadline\": \"2026-04-01\",\n  \"is_public\": false,\n  \"estimated_hours\": 5\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Task Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Task",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Finish project proposal Updated\",\n  \"priority\": \"urgent\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Task",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Start Task",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/start",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "start"]
+                        }
+                    }
+                },
+                {
+                    "name": "Complete Task",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"difficulty\": \"hard\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/complete",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "complete"]
+                        }
+                    }
+                },
+                {
+                    "name": "Fail Task",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/fail",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "fail"]
+                        }
+                    }
+                },
+                {
+                    "name": "Attack Monster",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/attack-monster",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "attack-monster"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Cheer",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/add-cheer",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "add-cheer"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Overdue Tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/overdue",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "overdue"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Due Soon Tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/due-soon",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "due-soon"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Public Tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/public?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "public"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Subtasks",
+            "item": [
+                {
+                    "name": "Get All Subtasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks?task_id={{task_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "subtasks"],
+                            "query": [
+                                {
+                                    "key": "task_id",
+                                    "value": "{{task_id}}"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Subtask",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"task_id\": \"{{task_id}}\",\n  \"title\": \"Research market trends\",\n  \"order_index\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "subtasks"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Subtask",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks/{{subtask_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "subtasks", "{{subtask_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Subtask",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Research market trends - Updated\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks/{{subtask_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "subtasks", "{{subtask_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Subtask",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks/{{subtask_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "subtasks", "{{subtask_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Toggle Subtask",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks/{{subtask_id}}/toggle",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "subtasks",
+                                "{{subtask_id}}",
+                                "toggle"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Batch Reorder Subtasks",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"subtasks\": [\n    {\"id\": \"id1\", \"order_index\": 1},\n    {\"id\": \"id2\", \"order_index\": 2},\n    {\"id\": \"id3\", \"order_index\": 3}\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/subtasks/batch-reorder",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "subtasks", "batch-reorder"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Achievements",
+            "item": [
+                {
+                    "name": "Get All Achievements",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/achievements?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "achievements"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Achievement Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/achievements/{{achievement_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "achievements",
+                                "{{achievement_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Achievements",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/achievements/user-achievements",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "achievements", "user-achievements"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Achievement Progress",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/achievements/progress",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "achievements", "progress"]
+                        }
+                    }
+                },
+                {
+                    "name": "Check & Unlock Achievement",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/achievements/check-unlock",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "achievements", "check-unlock"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Badges",
+            "item": [
+                {
+                    "name": "Get All Badges",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/badges?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "badges"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Badge",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/badges/{{badge_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "badges", "{{badge_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Badges",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/badges/user-badges",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "badges", "user-badges"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Badges by Rarity",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/badges/by-rarity/epic",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "badges", "by-rarity", "epic"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Badge Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/badges/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "badges", "stats"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "XP & Levels",
+            "item": [
+                {
+                    "name": "Get XP Logs",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/xp-logs?limit=20&source=task_complete",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "xp-logs"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "source",
+                                    "value": "task_complete"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get XP Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/xp-logs/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "xp-logs", "stats"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today XP",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/xp-logs/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "xp-logs", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Weekly XP",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/xp-logs/weekly",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "xp-logs", "weekly"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Friends",
+            "item": [
+                {
+                    "name": "Get Friends List",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friends?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Friend",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"user_id\": \"{{friend_user_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/friends",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends"]
+                        }
+                    }
+                },
+                {
+                    "name": "Remove Friend",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friends/{{friend_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends", "{{friend_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Block Friend",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friends/{{user_id}}/block",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends", "{{user_id}}", "block"]
+                        }
+                    }
+                },
+                {
+                    "name": "Unblock Friend",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friends/{{user_id}}/unblock",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends", "{{user_id}}", "unblock"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Blocked Friends",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friends/blocked",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends", "blocked"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Friend Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friends/{{user_id}}/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friends", "{{user_id}}", "stats"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Friend Requests",
+            "item": [
+                {
+                    "name": "Get Friend Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friend-requests?type=received",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friend-requests"],
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "received"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Accept Friend Request",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friend-requests/{{request_id}}/accept",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "friend-requests",
+                                "{{request_id}}",
+                                "accept"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Reject Friend Request",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friend-requests/{{request_id}}/reject",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "friend-requests",
+                                "{{request_id}}",
+                                "reject"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Pending Count",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/friend-requests/pending-count",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "friend-requests", "pending-count"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pomodoro Sessions",
+            "item": [
+                {
+                    "name": "Get All Sessions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "pomodoro-sessions"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Start Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"task_id\": \"{{task_id}}\",\n  \"duration_minutes\": 25\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "pomodoro-sessions"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Session",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions/{{session_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "pomodoro-sessions",
+                                "{{session_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Complete Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions/{{session_id}}/complete",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "pomodoro-sessions",
+                                "{{session_id}}",
+                                "complete"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Cancel Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions/{{session_id}}/cancel",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "pomodoro-sessions",
+                                "{{session_id}}",
+                                "cancel"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions/today-stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "pomodoro-sessions", "today-stats"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Weekly Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-sessions/weekly-stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "pomodoro-sessions", "weekly-stats"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pomodoro Streak",
+            "item": [
+                {
+                    "name": "Get Streak",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-streaks/streak",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "pomodoro-streaks", "streak"]
+                        }
+                    }
+                },
+                {
+                    "name": "Reset Streak",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/pomodoro-streaks/reset",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "pomodoro-streaks", "reset"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Rewards",
+            "item": [
+                {
+                    "name": "Claim Daily Reward",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/daily-rewards/claim",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "daily-rewards", "claim"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Reward Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/daily-rewards/status",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "daily-rewards", "status"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Streak",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/daily-rewards/streak",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "daily-rewards", "streak"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Spin Rewards",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/spin-rewards?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "spin-rewards"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Spin Wheel",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/spin-rewards/spin",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "spin-rewards", "spin"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Spin History",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/spin-rewards/history?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "spin-rewards", "history"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Spin Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/spin-rewards/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "spin-rewards", "stats"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Study Rooms",
+            "item": [
+                {
+                    "name": "Get All Rooms",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "study-rooms"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Room",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Morning Study Gang\",\n  \"description\": \"Belajar bareng sebelum jam 12\",\n  \"max_members\": 10,\n  \"is_public\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "study-rooms"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Room",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/{{room_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "study-rooms", "{{room_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Room",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Morning Study Gang Updated\",\n  \"max_members\": 15\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/{{room_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "study-rooms", "{{room_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Room",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/{{room_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "study-rooms", "{{room_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Join Room",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/{{room_id}}/join",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "study-rooms",
+                                "{{room_id}}",
+                                "join"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Leave Room",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/{{room_id}}/leave",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "study-rooms",
+                                "{{room_id}}",
+                                "leave"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Room Members",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/{{room_id}}/members",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "study-rooms",
+                                "{{room_id}}",
+                                "members"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Recommended Rooms",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/study-rooms/recommended",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "study-rooms", "recommended"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Leaderboard",
+            "item": [
+                {
+                    "name": "Global Leaderboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/leaderboards/global?limit=10",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "leaderboards", "global"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Weekly Leaderboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/leaderboards/weekly",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "leaderboards", "weekly"]
+                        }
+                    }
+                },
+                {
+                    "name": "Monthly Leaderboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/leaderboards/monthly",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "leaderboards", "monthly"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Top 10",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/leaderboards/top-10",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "leaderboards", "top-10"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Rank",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/leaderboards/user-rank",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "leaderboards", "user-rank"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Schedules",
+            "item": [
+                {
+                    "name": "Get All Schedules",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Schedule",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"task_id\": \"{{task_id}}\",\n  \"scheduled_date\": \"2026-04-01\",\n  \"priority\": \"high\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today Schedules",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Upcoming Schedules",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules/upcoming?days=7",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules", "upcoming"],
+                            "query": [
+                                {
+                                    "key": "days",
+                                    "value": "7"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Schedule",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules/{{schedule_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules", "{{schedule_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Schedule",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"priority\": \"urgent\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules/{{schedule_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules", "{{schedule_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Schedule",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules/{{schedule_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules", "{{schedule_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Auto Schedule by Deadline",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/schedules/auto-schedule",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "schedules", "auto-schedule"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Reminders",
+            "item": [
+                {
+                    "name": "Get All Reminders",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Reminder",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"task_id\": \"{{task_id}}\",\n  \"reminder_time\": \"2026-03-22 10:00:00\",\n  \"type\": \"email\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Upcoming Reminders",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders/upcoming?hours=24",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders", "upcoming"],
+                            "query": [
+                                {
+                                    "key": "hours",
+                                    "value": "24"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Pending Reminders",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders/pending",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders", "pending"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Reminder",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders/{{reminder_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders", "{{reminder_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Reminder",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"type\": \"push\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders/{{reminder_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders", "{{reminder_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Reminder",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/reminders/{{reminder_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "reminders", "{{reminder_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Challenges",
+            "item": [
+                {
+                    "name": "Get All Challenges",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/challenges?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "challenges"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Challenge",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"30-Day Productivity Marathon\",\n  \"description\": \"Complete 50 tasks in 30 days\",\n  \"target\": 50,\n  \"metric\": \"tasks\",\n  \"end_date\": \"2026-04-21\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/challenges",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "challenges"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Challenge",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/challenges/{{challenge_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "challenges", "{{challenge_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Join Challenge",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/challenges/{{challenge_id}}/join",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "challenges",
+                                "{{challenge_id}}",
+                                "join"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Challenge Participants",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/challenges/{{challenge_id}}/participants",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "challenges",
+                                "{{challenge_id}}",
+                                "participants"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Challenge Rankings",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/challenges/{{challenge_id}}/rankings",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "challenges",
+                                "{{challenge_id}}",
+                                "rankings"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Task Comments & Cheers",
+            "item": [
+                {
+                    "name": "Get Task Comments",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "comments"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Comment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"content\": \"Great task! You can do it!\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "comments"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Task Cheers",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/cheers",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "cheers"]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Cheer",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/cheers",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "tasks", "{{task_id}}", "cheers"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Activity Logs",
+            "item": [
+                {
+                    "name": "Get Activity Logs",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activity-logs?limit=20&action=task_complete",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "activity-logs"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "action",
+                                    "value": "task_complete"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today Activity",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activity-logs/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "activity-logs", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Weekly Activity",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activity-logs/weekly",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "activity-logs", "weekly"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Activity Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activity-logs/summary",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "activity-logs", "summary"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Activity Streak",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activity-logs/streak",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "activity-logs", "streak"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Peak Hours",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activity-logs/peak-hours",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "activity-logs", "peak-hours"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Monsters",
+            "item": [
+                {
+                    "name": "Get All Monsters",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/monsters?limit=20&rarity=epic",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "monsters"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "rarity",
+                                    "value": "epic"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Monster",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/monsters/{{monster_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "monsters", "{{monster_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Monsters by Rarity",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/monsters/by-rarity/legendary",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "monsters",
+                                "by-rarity",
+                                "legendary"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Rarity Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/monsters/rarity-stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "monsters", "rarity-stats"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "user_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "task_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "category_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "friend_user_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "room_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "challenge_id",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}

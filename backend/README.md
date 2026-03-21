@@ -1,98 +1,367 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# VAROFocus Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+**VAROFocus** adalah aplikasi manajemen tugas berbasis gamifikasi yang mengubah produktivitas menjadi petualangan seru dengan sistem monster combat, achievement unlocking, dan kolaborasi sosial.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Daftar Isi
 
-## Description
+- [Fitur Utama](#fitur-utama)
+- [Stack Teknologi](#stack-teknologi)
+- [Instalasi & Setup](#instalasi--setup)
+- [Autentikasi](#autentikasi)
+- [Format Response](#format-response)
+- [Panduan Endpoint](#panduan-endpoint)
+- [Contoh Penggunaan](#contoh-penggunaan)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Fitur Utama
+
+### 1. **Manajemen Tugas dengan Monster Combat**
+
+- Tambah, edit, hapus tugas dengan deadline dan prioritas
+- Sistem difficulty level (Easy, Medium, Hard, Boss) yang mempengaruhi reward XP
+- Attack monster saat menyelesaikan tugas (RPG mechanics)
+- Subtask untuk breakdown tugas kompleks
+- Task status tracking (pending, in_progress, completed, failed)
+
+### 2. **Sistem Gamifikasi**
+
+- **XP & Level**: Dapatkan XP dari berbagai aktivitas, naik level otomatis
+- **Achievements**: 15+ achievement yang bisa di-unlock berdasarkan milestone
+- **Badges**: Koleksi badge dengan rarity tier (common, rare, epic, legendary)
+- **Leaderboard**: Global, weekly, monthly ranking berdasarkan XP, jumlah tugas, streak
+- **Daily Streaks**: Maintain streak untuk bonus XP multiplier
+
+### 3. **Sistem Reward & Spin Wheel**
+
+- Daily login reward dengan streak bonus
+- Spin wheel untuk random rewards (XP boost, theme, item, badge)
+- Tracking riwayat claim dan spin
+
+### 4. **Pomodoro & Fokus**
+
+- Pomodoro session tracking dengan monster attack integration
+- Pomodoro streak dengan bonus multiplier (x2 at 50+, x1.5 at 20+, x1.2 at 10+)
+- Today & weekly statistics
+
+### 5. **Fitur Sosial**
+
+- Friend system dengan bidirectional relationship
+- Friend request workflow (sent/received, accept/reject)
+- Task comment dengan nested reply system
+- Task cheer/like untuk motivasi teman (award XP kepada task owner)
+- Block user functionality
+
+### 6. **Study Rooms - Virtual Co-working**
+
+- Buat/join virtual study room untuk kolaborasi
+- Member roles: owner, moderator, member
+- Room session tracking dengan duration
+- Real-time member management
+
+### 7. **Scheduling & Reminders**
+
+- Schedule tugas untuk hari tertentu dengan priority level
+- Auto-scheduling berdasarkan deadline
+- Reminder system (email, push, in-app)
+- Calendar event sync dengan Google Calendar, Apple Calendar, Outlook
+
+### 8. **Challenge System**
+
+- Buat challenge dan invite teman
+- Kompetisi dengan real-time leaderboard
+- Challenge progress tracking
+
+### 9. **Analytics & Activity**
+
+- Activity log tracking (task_complete, pomodoro, etc)
+- XP breakdown by source (task, pomodoro, achievement, daily_reward)
+- User statistics (total XP, tasks, achievements, badges, streaks)
+- Peak activity hours analysis
+
+---
+
+## 🛠 Stack Teknologi
+
+| Component      | Technology                     |
+| -------------- | ------------------------------ |
+| Framework      | Laravel 12                     |
+| Database       | PostgreSQL (UUID primary keys) |
+| Authentication | Laravel Sanctum (Token-based)  |
+| ORM            | Eloquent                       |
+| API Style      | RESTful JSON                   |
+| Environment    | PHP 8.3+                       |
+
+---
+
+## Instalasi & Setup
+
+### Prerequisites
+
+- PHP 8.3+
+- PostgreSQL 14+
+- Composer
+- Node.js & npm (untuk asset compilation)
+
+### Langkah-Langkah
+
+1. **Clone Repository**
 
 ```bash
-$ npm install
+git clone <repository-url>
+cd backend
 ```
 
-## Compile and run the project
+2. **Install Dependencies**
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+composer install
+npm install
 ```
 
-## Run tests
+3. **Setup Environment File**
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
+php artisan key:generate
 ```
 
-## Deployment
+4. **Configure Database**
+   Edit `.env`:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+DB_CONNECTION=
+DB_URL =
+```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+5. **Run Migrations**
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+php artisan migrate
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+6. **Install Sanctum**
 
-## Resources
+```bash
+php artisan install:api
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+7. **Start Development Server**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+php artisan serve
+```
 
-## Support
+Server akan berjalan di `http://localhost:8000`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## Autentikasi
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+VAROFocus menggunakan **Laravel Sanctum** untuk token-based authentication.
 
-## License
+### Register
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "password_confirmation": "password123"
+}
+```
+
+**Response (201)**:
+
+```json
+{
+    "message": "User registered successfully",
+    "data": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+    }
+}
+```
+
+### Login
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Response (200)**:
+
+```json
+{
+    "message": "Login successful",
+    "data": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+        "user": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "John Doe",
+            "email": "john@example.com"
+        }
+    }
+}
+```
+
+### Menggunakan Token
+
+Tambahkan header di setiap request yang memerlukan autentikasi:
+
+```http
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
+```
+
+---
+
+## Format Response
+
+Semua response mengikuti format JSON standar:
+
+### Success Response
+
+```json
+{
+  "message": "Operation successful",
+  "data": {...}
+}
+```
+
+### HTTP Status Codes
+
+- `200 OK` - Request berhasil
+- `201 Created` - Resource berhasil dibuat
+- `400 Bad Request` - Request tidak valid
+- `401 Unauthorized` - Token tidak valid/expired
+- `403 Forbidden` - Akses ditolak
+- `404 Not Found` - Resource tidak ditemukan
+- `422 Unprocessable Entity` - Validasi gagal
+- `500 Internal Server Error` - Server error
+
+---
+
+## Endpoint
+
+Total **120+ REST endpoints** yang tersedia untuk semua fitur.
+
+### Authentication Endpoints (5 endpoints)
+
+- `POST /api/auth/register` - Register user
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Get current user
+- `POST /api/auth/refresh-token` - Refresh token
+
+### User Endpoints (8 endpoints)
+
+- `GET /api/users` - List users
+- `GET /api/users/{id}` - Get user profile
+- `PUT /api/users/{id}` - Update profile
+- `GET /api/users/{id}/stats` - Get user stats
+- `GET /api/users/top-users` - Top XP users
+
+### Task Endpoints (13 endpoints)
+
+- `GET /api/tasks` - List tasks
+- `POST /api/tasks` - Create task
+- `GET /api/tasks/{id}` - Get task detail
+- `POST /api/tasks/{id}/complete` - Complete task (award XP)
+- `POST /api/tasks/{id}/attack-monster` - Attack monster
+- Plus lebih banyak custom actions...
+
+### Friend & Social (11 endpoints)
+
+- `GET /api/friends` - List friends
+- `POST /api/friends` - Add friend
+- Task comments, task cheers, chats
+
+### Pomodoro (9 endpoints)
+
+- `POST /api/pomodoro-sessions` - Start session
+- `POST /api/pomodoro-sessions/{id}/complete` - Complete session
+- Streak management, statistics
+
+### Gamification (15 endpoints)
+
+- Achievements, badges, XP logging, leaderboards
+
+### Study Rooms (13 endpoints)
+
+- Room CRUD, member management, sessions
+
+### Scheduling (11 endpoints)
+
+- Schedule tasks, reminders, calendar events
+
+### Challenges (10 endpoints)
+
+- Create challenges, join, rankings
+
+### Plus banyak custom analytics endpoints!
+
+Untuk dokumentasi lengkap endpoint, lihat file `VAROFocus-API.postman_collection.json`
+
+---
+
+## Contoh Penggunaan
+
+### Login & Get Token
+
+```bash
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123"
+  }'
+```
+
+### Complete Task dengan Monster Attack
+
+```bash
+curl -X POST http://localhost:8000/api/tasks/550e8400/complete \
+  -H "Authorization: Bearer token_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "difficulty": "hard"
+  }'
+```
+
+### Spin Wheel & Get Reward
+
+```bash
+curl -X POST http://localhost:8000/api/spin-rewards/spin \
+  -H "Authorization: Bearer token_here"
+```
+
+### Get Achievement Progress
+
+```bash
+curl -X GET http://localhost:8000/api/achievements/progress \
+  -H "Authorization: Bearer token_here"
+```
+
+---
+
+## Testing Postman
+
+Import file `VAROFocus-API.postman_collection.json` ke Postman:
+
+1. Di Postman, klik Import
+2. Pilih file collection JSON
+3. Setup environment variable `token` dengan token dari login
+4. Jalankan request
+
+---
