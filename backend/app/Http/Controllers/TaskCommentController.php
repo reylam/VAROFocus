@@ -6,7 +6,7 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use Illuminate\Http\Request;
 
-class TaskCommentController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass TaskCommentController extends Controller
 {
     public function index($taskId, Request $request)
     {
@@ -27,10 +27,17 @@ class TaskCommentController extends Controller
         $user = $request->user();
         $task = Task::findOrFail($taskId);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'comment' => 'required|string|max:5000',
             'parent_comment_id' => 'nullable|exists:task_comments,id',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $comment = $task->comments()->create([
             'user_id' => $user->id,
@@ -56,9 +63,16 @@ class TaskCommentController extends Controller
             ], 403);
         }
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'comment' => 'required|string|max:5000',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $comment->edit($validated['comment']);
 

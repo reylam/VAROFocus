@@ -6,7 +6,7 @@ use App\Models\Task;
 use App\Models\SubTask;
 use Illuminate\Http\Request;
 
-class SubTaskController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass SubTaskController extends Controller
 {
     public function index($taskId, Request $request)
     {
@@ -25,10 +25,17 @@ class SubTaskController extends Controller
         $user = $request->user();
         $task = $user->tasks()->findOrFail($taskId);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'order_index' => 'nullable|integer',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $orderIndex = $validated['order_index'] ?? $task->subTasks()->count();
 
@@ -50,11 +57,18 @@ class SubTaskController extends Controller
         $task = $user->tasks()->findOrFail($taskId);
         $subTask = $task->subTasks()->findOrFail($subTaskId);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'string|max:255',
             'is_completed' => 'boolean',
             'order_index' => 'integer',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $subTask->update($validated);
 
@@ -97,11 +111,18 @@ class SubTaskController extends Controller
         $user = $request->user();
         $task = $user->tasks()->findOrFail($taskId);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'sub_tasks' => 'required|array',
             'sub_tasks.*.id' => 'required|string',
             'sub_tasks.*.order_index' => 'required|integer',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         foreach ($validated['sub_tasks'] as $item) {
             $task->subTasks()

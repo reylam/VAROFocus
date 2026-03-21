@@ -6,7 +6,7 @@ use App\Models\Reminder;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
-class ReminderController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass ReminderController extends Controller
 {
     public function index(Request $request)
     {
@@ -30,11 +30,18 @@ class ReminderController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'task_id' => 'required|exists:tasks,id',
             'reminder_time' => 'required|date_format:Y-m-d H:i:s|after:now',
             'type' => 'required|in:email,push,in_app',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $task = $user->tasks()->findOrFail($validated['task_id']);
 
@@ -66,10 +73,17 @@ class ReminderController extends Controller
 
         $reminder = $user->reminders()->findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'reminder_time' => 'sometimes|date_format:Y-m-d H:i:s|after:now',
             'type' => 'sometimes|in:email,push,in_app',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $reminder->update($validated);
 

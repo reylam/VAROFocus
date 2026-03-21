@@ -8,7 +8,7 @@ use App\Models\MonsterAttack;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
-class TaskController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass TaskController extends Controller
 {
     public function index(Request $request)
     {
@@ -41,7 +41,7 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
@@ -51,6 +51,13 @@ class TaskController extends Controller
             'priority' => 'integer|between:0,5|default:0',
             'is_public' => 'boolean|default:false',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         // Set HP and XP based on difficulty
         $difficultyMap = [
@@ -112,7 +119,7 @@ class TaskController extends Controller
         $user = $request->user();
         $task = $user->tasks()->findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
@@ -123,6 +130,13 @@ class TaskController extends Controller
             'status' => 'in:pending,in_progress,completed,failed',
             'is_public' => 'boolean',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $task->update($validated);
 
@@ -200,10 +214,17 @@ class TaskController extends Controller
         $user = $request->user();
         $task = $user->tasks()->findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'damage' => 'required|integer|min:1|max:500',
             'source' => 'required|string|in:pomodoro,manual,skill',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         if (!$task->monster) {
             return response()->json([

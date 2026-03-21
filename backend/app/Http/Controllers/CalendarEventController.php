@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
 
-class CalendarEventController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass CalendarEventController extends Controller
 {
     public function index(Request $request)
     {
@@ -28,7 +28,7 @@ class CalendarEventController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'start_time' => 'required|date_format:Y-m-d H:i:s',
@@ -37,6 +37,13 @@ class CalendarEventController extends Controller
             'external_event_id' => 'nullable|string',
             'is_synced' => 'sometimes|boolean',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $event = $user->calendarEvents()->create($validated);
 
@@ -61,12 +68,19 @@ class CalendarEventController extends Controller
 
         $event = $user->calendarEvents()->findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|nullable|string',
             'start_time' => 'sometimes|date_format:Y-m-d H:i:s',
             'end_time' => 'sometimes|date_format:Y-m-d H:i:s',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $event->update($validated);
 
@@ -105,10 +119,17 @@ class CalendarEventController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'start_date' => 'required|date_format:Y-m-d',
             'end_date' => 'required|date_format:Y-m-d|after:start_date',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $events = $user->calendarEvents()
             ->whereBetween('start_time', [
@@ -125,9 +146,16 @@ class CalendarEventController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'access_token' => 'required|string',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         // TODO: Implement Google Calendar API sync
         // This would involve:
@@ -157,9 +185,16 @@ class CalendarEventController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'access_token' => 'required|string',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         // TODO: Implement Outlook Calendar sync
 

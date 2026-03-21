@@ -6,7 +6,7 @@ use App\Models\Challenge;
 use App\Models\ChallengeParticipant;
 use Illuminate\Http\Request;
 
-class ChallengeController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass ChallengeController extends Controller
 {
     public function index(Request $request)
     {
@@ -32,7 +32,7 @@ class ChallengeController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'challenge_type' => 'required|string|in:tasks_completed,xp_gained,pomodoros',
@@ -42,6 +42,13 @@ class ChallengeController extends Controller
             'reward_xp' => 'integer|min:0|default:100',
             'reward_badge_id' => 'nullable|exists:badges,id',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $challenge = Challenge::create([
             'creator_id' => $user->id,
@@ -94,11 +101,18 @@ class ChallengeController extends Controller
             ], 403);
         }
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'title' => 'string|max:255',
             'description' => 'nullable|string',
             'reward_xp' => 'integer|min:0',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $challenge->update($validated);
 
@@ -167,9 +181,16 @@ class ChallengeController extends Controller
         $user = $request->user();
         $challenge = Challenge::findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'progress' => 'required|integer|min:0',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $participant = $challenge->updateParticipantProgress($user->id, $validated['progress']);
 

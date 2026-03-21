@@ -1353,6 +1353,101 @@
             ]
         },
         {
+            "name": "User Spin Logs",
+            "item": [
+                {
+                    "name": "Get User Spin Logs",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today Spins",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Weekly Spins",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs/weekly",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs", "weekly"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Reward Distribution",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs/distribution",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs", "distribution"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Most Recent Spins",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs/recent",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs", "recent"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Spin Log",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs/{{spin_log_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs", "{{spin_log_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete User Spin Log",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/user-spin-logs/{{spin_log_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user-spin-logs", "{{spin_log_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "Study Rooms",
             "item": [
                 {
@@ -1499,6 +1594,139 @@
                             "raw": "{{base_url}}/api/study-rooms/recommended",
                             "host": ["{{base_url}}"],
                             "path": ["api", "study-rooms", "recommended"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Room Sessions",
+            "item": [
+                {
+                    "name": "Get All Room Sessions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Room Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"study_room_id\": \"{{room_id}}\",\n  \"duration_minutes\": 60\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Active Sessions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/active",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions", "active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Session Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions", "stats"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today Sessions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Peak Hours",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/peak-hours",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions", "peak-hours"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Room Session",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/{{session_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions", "{{session_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "End Room Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/{{session_id}}/end",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "room-sessions",
+                                "{{session_id}}",
+                                "end"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Room Session",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/room-sessions/{{session_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "room-sessions", "{{session_id}}"]
                         }
                     }
                 }
@@ -1826,6 +2054,205 @@
             ]
         },
         {
+            "name": "Calendar Events",
+            "item": [
+                {
+                    "name": "Get All Calendar Events",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events?limit=20",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events"],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Calendar Event",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Team Planning\",\n  \"start_time\": \"2026-03-25 09:00:00\",\n  \"end_time\": \"2026-03-25 10:00:00\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Today Events",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/today",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "today"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Upcoming Events",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/upcoming",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "upcoming"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Events By Date",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/by-date/2026-03-25",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "calendar-events",
+                                "by-date",
+                                "2026-03-25"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Events By Date Range",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"start_date\": \"2026-03-25\",\n  \"end_date\": \"2026-03-28\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/by-date-range",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "by-date-range"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Sync Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/sync-stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "sync-stats"]
+                        }
+                    }
+                },
+                {
+                    "name": "Sync with Google",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/sync-google",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "sync-google"]
+                        }
+                    }
+                },
+                {
+                    "name": "Sync with Apple",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/sync-apple",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "sync-apple"]
+                        }
+                    }
+                },
+                {
+                    "name": "Sync with Outlook",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/sync-outlook",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "sync-outlook"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Calendar Event",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/{{event_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "{{event_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Calendar Event",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Updated event\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/{{event_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "{{event_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Calendar Event",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/calendar-events/{{event_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "calendar-events", "{{event_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "Challenges",
             "item": [
                 {
@@ -1975,6 +2402,134 @@
                     }
                 },
                 {
+                    "name": "Get Comment Count",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/count",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "comments",
+                                "count"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Comment",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/{{comment_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "comments",
+                                "{{comment_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Comment",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"content\": \"Updated comment content\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/{{comment_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "comments",
+                                "{{comment_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Comment",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/{{comment_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "comments",
+                                "{{comment_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Comment Replies",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/{{comment_id}}/replies",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "comments",
+                                "{{comment_id}}",
+                                "replies"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Reply",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"content\": \"Nice follow-up\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/{{comment_id}}/replies",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "comments",
+                                "{{comment_id}}",
+                                "replies"
+                            ]
+                        }
+                    }
+                },
+                {
                     "name": "Get Task Cheers",
                     "request": {
                         "method": "GET",
@@ -1995,6 +2550,42 @@
                             "raw": "{{base_url}}/api/tasks/{{task_id}}/cheers",
                             "host": ["{{base_url}}"],
                             "path": ["api", "tasks", "{{task_id}}", "cheers"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Cheer",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/cheers/{{cheer_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "cheers",
+                                "{{cheer_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Has Cheered",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tasks/{{task_id}}/cheers/has-cheered",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_id}}",
+                                "cheers",
+                                "has-cheered"
+                            ]
                         }
                     }
                 }
@@ -2194,6 +2785,46 @@
         },
         {
             "key": "challenge_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "schedule_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "reminder_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "event_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "session_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "spin_log_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "comment_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "cheer_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "monster_id",
             "value": "",
             "type": "string"
         }

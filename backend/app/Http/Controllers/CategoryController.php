@@ -6,7 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class CategoryController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass CategoryController extends Controller
 {
     public function index(Request $request)
     {
@@ -20,7 +20,7 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'name' => [
                 'required',
                 'string',
@@ -31,6 +31,13 @@ class CategoryController extends Controller
             'color' => 'nullable|string|regex:/^#[0-9A-F]{6}$/i',
             'is_default' => 'boolean',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $category = $user->categories()->create($validated);
 
@@ -62,7 +69,7 @@ class CategoryController extends Controller
         $user = $request->user();
         $category = $user->categories()->findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'name' => [
                 'string',
                 'max:100',
@@ -74,6 +81,13 @@ class CategoryController extends Controller
             'color' => 'nullable|string|regex:/^#[0-9A-F]{6}$/i',
             'is_default' => 'boolean',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $category->update($validated);
 

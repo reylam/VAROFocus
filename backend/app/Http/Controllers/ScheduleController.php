@@ -6,7 +6,7 @@ use App\Models\Schedule;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
-class ScheduleController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass ScheduleController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,11 +25,18 @@ class ScheduleController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'task_id' => 'required|exists:tasks,id',
             'scheduled_date' => 'required|date_format:Y-m-d|after:today',
             'priority' => 'sometimes|in:low,medium,high,urgent',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         // Verify task belongs to user
         $task = $user->tasks()->findOrFail($validated['task_id']);
@@ -61,10 +68,17 @@ class ScheduleController extends Controller
 
         $schedule = $user->schedules()->findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'scheduled_date' => 'sometimes|date_format:Y-m-d|after:today',
             'priority' => 'sometimes|in:low,medium,high,urgent',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $schedule->update($validated);
 
@@ -212,12 +226,19 @@ class ScheduleController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'schedule_ids' => 'required|array',
             'schedule_ids.*' => 'exists:schedules,id',
             'priority' => 'sometimes|in:low,medium,high,urgent',
             'scheduled_date' => 'sometimes|date_format:Y-m-d',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $updated = $user->schedules()
             ->whereIn('id', $validated['schedule_ids'])

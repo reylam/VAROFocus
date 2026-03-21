@@ -6,7 +6,7 @@ use App\Models\StudyRoom;
 use App\Models\RoomSession;
 use Illuminate\Http\Request;
 
-class StudyRoomController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass StudyRoomController extends Controller
 {
     public function index(Request $request)
     {
@@ -32,12 +32,19 @@ class StudyRoomController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'description' => 'nullable|string',
             'is_private' => 'boolean|default:false',
             'max_members' => 'integer|min:2|max:50|default:10',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $room = StudyRoom::create([
             'owner_id' => $user->id,
@@ -80,12 +87,19 @@ class StudyRoomController extends Controller
             ], 403);
         }
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'name' => 'string|max:100',
             'description' => 'nullable|string',
             'is_private' => 'boolean',
             'max_members' => 'integer|min:2|max:50',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $room->update($validated);
 

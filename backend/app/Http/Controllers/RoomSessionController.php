@@ -6,7 +6,7 @@ use App\Models\RoomSession;
 use App\Models\StudyRoom;
 use Illuminate\Http\Request;
 
-class RoomSessionController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass RoomSessionController extends Controller
 {
     public function index(Request $request)
     {
@@ -30,9 +30,16 @@ class RoomSessionController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'study_room_id' => 'required|exists:study_rooms,id',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $room = StudyRoom::findOrFail($validated['study_room_id']);
 

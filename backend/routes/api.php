@@ -311,3 +311,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [ActivityLogController::class, 'show']);
     });
 });
+
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Endpoint not found',
+    ], 404);
+});

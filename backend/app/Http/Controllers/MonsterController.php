@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Monster;
 use Illuminate\Http\Request;
 
-class MonsterController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass MonsterController extends Controller
 {
     public function index(Request $request)
     {
@@ -44,7 +44,7 @@ class MonsterController extends Controller
             ], 403);
         }
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'name' => 'required|string|unique:monsters',
             'description' => 'required|string',
             'type' => 'required|in:fire,water,earth,wind,light,dark',
@@ -54,6 +54,13 @@ class MonsterController extends Controller
             'image_url' => 'required|url',
             'icon_url' => 'required|url',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $monster = Monster::create($validated);
 
@@ -74,7 +81,7 @@ class MonsterController extends Controller
 
         $monster = Monster::findOrFail($id);
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'name' => 'sometimes|string|unique:monsters,name,' . $id,
             'description' => 'sometimes|string',
             'type' => 'sometimes|in:fire,water,earth,wind,light,dark',
@@ -84,6 +91,13 @@ class MonsterController extends Controller
             'image_url' => 'sometimes|url',
             'icon_url' => 'sometimes|url',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $monster->update($validated);
 

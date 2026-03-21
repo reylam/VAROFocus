@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-class UserController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass UserController extends Controller
 {
     public function index(Request $request)
     {
@@ -42,7 +42,7 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'username' => [
                 'string',
                 'min:3',
@@ -57,6 +57,13 @@ class UserController extends Controller
             'settings' => 'nullable|json',
             'title' => 'nullable|string|max:50',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $user->update($validated);
 
@@ -70,10 +77,17 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'current_password' => 'required|string',
             'new_password' => 'required|string|min:8|confirmed',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         if (!Hash::check($validated['current_password'], $user->password_hash)) {
             return response()->json([

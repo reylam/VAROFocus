@@ -6,7 +6,7 @@ use App\Models\PomodoroSession;
 use App\Models\PomodoroStreak;
 use Illuminate\Http\Request;
 
-class PomodoroSessionController extends Controller
+use Illuminate\Support\Facades\Validator;\nclass PomodoroSessionController extends Controller
 {
     public function index(Request $request)
     {
@@ -29,11 +29,18 @@ class PomodoroSessionController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'task_id' => 'nullable|exists:tasks,id',
             'duration_minutes' => 'integer|min:15|max:60|default:25',
             'break_minutes' => 'integer|min:5|max:30|default:5',
         ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+        $validated = $validation->validated();
 
         $session = $user->pomodoroSessions()->create([
             'task_id' => $validated['task_id'] ?? null,
