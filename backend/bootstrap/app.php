@@ -41,8 +41,17 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->renderable(function (\Throwable $e, $request) {
-            return response()->json([
-                'message' => 'Server error',
-            ], 500);
+            $response = [
+                'message' => config('app.debug') ? $e->getMessage() : 'Server error',
+                'status' => 500,
+            ];
+
+            if (config('app.debug')) {
+                $response['exception'] = get_class($e);
+                $response['file'] = $e->getFile();
+                $response['line'] = $e->getLine();
+            }
+
+            return response()->json($response, 500);
         });
     })->create();

@@ -8,7 +8,8 @@ use App\Models\MonsterAttack;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass TaskController extends Controller
+use Illuminate\Support\Facades\Validator;
+class TaskController extends Controller
 {
     public function index(Request $request)
     {

@@ -6,7 +6,8 @@ use App\Models\RoomSession;
 use App\Models\StudyRoom;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass RoomSessionController extends Controller
+use Illuminate\Support\Facades\Validator;
+class RoomSessionController extends Controller
 {
     public function index(Request $request)
     {

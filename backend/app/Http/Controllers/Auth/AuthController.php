@@ -9,21 +9,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validated = $request->validate([
+        $validation = Validator::make($request->all(), [
             'username' => 'required|string|unique:users|min:3|max:50',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        if ($validation->fails()) {
+            return response()->json([
+                'message' => 'Invalid field',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+
         $user = User::create([
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-            'password_hash' => Hash::make($validated['password']),
+            'username' => $request->username,
+            'email' => $request->email,
+            'password_hash' => Hash::make($request->password),
             'auth_provider' => 'email',
             'level' => 1,
             'xp' => 0,
@@ -34,10 +42,7 @@ class AuthController extends Controller
         // Create daily reward record
         DailyReward::create(['user_id' => $user->id]);
 
-        event(new Registered($user));
-
-        $token = $user->createToken('api-token')->plainTextToken;
-
+        $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user->only(['id', 'username', 'email', 'level', 'xp', 'title']),
@@ -59,8 +64,6 @@ class AuthController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-
-        $user->updateLastActive();
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([

@@ -6,7 +6,8 @@ use App\Models\PomodoroSession;
 use App\Models\PomodoroStreak;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass PomodoroSessionController extends Controller
+use Illuminate\Support\Facades\Validator;
+class PomodoroSessionController extends Controller
 {
     public function index(Request $request)
     {

@@ -9,22 +9,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Sanctum\HasApiTokens;
 use Database\Factories\UserFactory;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     protected $table = 'users';
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected $fillable = [
+        "id",
         'username',
         'email',
         'password_hash',
         'auth_provider',
-        'auth_provider_id',
         'avatar_url',
         'level',
         'xp',

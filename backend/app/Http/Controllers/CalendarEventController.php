@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass CalendarEventController extends Controller
+use Illuminate\Support\Facades\Validator;
+class CalendarEventController extends Controller
 {
     public function index(Request $request)
     {

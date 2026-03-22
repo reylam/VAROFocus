@@ -6,7 +6,8 @@ use App\Models\Challenge;
 use App\Models\ChallengeParticipant;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass ChallengeController extends Controller
+use Illuminate\Support\Facades\Validator;
+class ChallengeController extends Controller
 {
     public function index(Request $request)
     {

@@ -6,7 +6,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-use Illuminate\Support\Facades\Validator;\nclass CategoryController extends Controller
+use Illuminate\Support\Facades\Validator;
+class CategoryController extends Controller
 {
     public function index(Request $request)
     {

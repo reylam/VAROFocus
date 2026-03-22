@@ -6,7 +6,8 @@ use App\Models\Schedule;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass ScheduleController extends Controller
+use Illuminate\Support\Facades\Validator;
+class ScheduleController extends Controller
 {
     public function index(Request $request)
     {

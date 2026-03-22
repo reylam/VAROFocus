@@ -6,7 +6,8 @@ use App\Models\Reminder;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass ReminderController extends Controller
+use Illuminate\Support\Facades\Validator;
+class ReminderController extends Controller
 {
     public function index(Request $request)
     {

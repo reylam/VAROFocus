@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Monster;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass MonsterController extends Controller
+use Illuminate\Support\Facades\Validator;
+class MonsterController extends Controller
 {
     public function index(Request $request)
     {

@@ -6,7 +6,8 @@ use App\Models\Task;
 use App\Models\SubTask;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass SubTaskController extends Controller
+use Illuminate\Support\Facades\Validator;
+class SubTaskController extends Controller
 {
     public function index($taskId, Request $request)
     {

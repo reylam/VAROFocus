@@ -6,7 +6,8 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Validator;\nclass TaskCommentController extends Controller
+use Illuminate\Support\Facades\Validator;
+class TaskCommentController extends Controller
 {
     public function index($taskId, Request $request)
     {
