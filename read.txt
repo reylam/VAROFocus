@@ -1,0 +1,376 @@
+You are a senior frontend engineer and UI/UX expert tasked with building a **production-ready, scalable, and highly interactive frontend** for a gamified productivity web app called **VAROFocus**.
+
+You MUST design the system with clean architecture, reusable components, and modern best practices.
+
+---
+
+## ⚙️ TECH STACK
+
+* React (TypeScript, Vite)
+* Tailwind CSS (with custom theme)
+* State Management:
+  - React Query (server state)
+  - Zustand (client/global state)
+* Routing: React Router
+* Animations: Framer Motion
+* Icons: Lucide React
+* Charts: Recharts (if needed)
+* Drag & Drop: dnd-kit
+* Pusher
+* WebSocket 
+
+---
+
+## 🎨 DESIGN SYSTEM
+
+Create a consistent design system:
+
+### Theme:
+* Style: Gamified + modern + clean + slightly futuristic
+* Inspiration: Duolingo + Notion + Habitica
+
+### Colors:
+* Primary: Neon Blue / Indigo
+* Secondary: Purple / Pink gradient
+* Success: Green
+* Danger: Red
+* XP: Yellow / Gold
+
+### UI Rules:
+* Card-based layout
+* Rounded corners (xl/2xl)
+* Soft shadows
+* Gradient accents
+* Glassmorphism (optional)
+* Dark & Light mode (toggle)
+
+---
+
+## 🧠 CORE CONCEPT
+
+* Tasks = Monsters
+* Completing tasks / pomodoro = attacking monsters
+* XP system + leveling
+* Rewards, achievements, badges
+
+---
+
+## 🏗️ FOLDER STRUCTURE
+
+Use scalable structure:
+
+src/
+* components/
+  - ui/
+  - shared/
+* features/
+  - tasks/
+  - pomodoro/
+  - leaderboard/
+  - challenges/
+  - social/
+* pages/
+* hooks/
+* services/ (API layer)
+* store/ (zustand)
+* types/
+* utils/
+
+---
+
+## 🌐 API INTEGRATION (Laravel Backend)
+
+Use Axios or Fetch with base config:
+
+* Base URL: /api
+* Use token-based auth (Bearer)
+* Handle:
+  - loading states
+  - error states
+  - retries
+  - optimistic updates
+
+Endpoints examples:
+* GET /tasks
+* POST /tasks
+* POST /pomodoro/start
+* GET /leaderboards
+* POST /rewards/claim
+
+---
+
+## 📱 PAGES & FEATURES
+
+---
+
+### 🏠 DASHBOARD
+
+Include:
+
+* User Profile Card:
+  - avatar
+  - level
+  - XP bar (animated)
+  - streak counter 🔥
+
+* Daily Reward Button (with animation)
+
+* Active Tasks:
+  - Monster cards
+  - HP bar
+  - Attack button
+
+* Pomodoro Quick Start:
+  - Start timer instantly
+
+* Activity Feed Preview
+
+* Leaderboard Top 5
+
+---
+
+### ✅ TASK MANAGEMENT
+
+Build a full task system:
+
+#### Task Features:
+* Create / Edit / Delete
+* Difficulty:
+  - easy, medium, hard, boss
+* Priority
+* Due date
+* Status:
+  - pending, in_progress, completed, failed
+
+#### Monster UI:
+* HP Bar (animated)
+* Damage animation when attacking
+* Shake effect on hit
+* Death animation when completed
+
+#### Advanced:
+* Subtasks (checklist)
+* Dependencies (blocked tasks)
+* Comments:
+  - nested replies
+* Like/Cheer system
+
+#### Interaction:
+* “Attack Monster” button:
+  - reduces HP
+  - sync with backend
+
+---
+
+### 🍅 POMODORO SYSTEM
+
+* Timer (25 min default)
+* Start / Pause / Cancel
+* Circular progress UI
+
+On complete:
+* Add XP
+* Attack monster
+* Increase streak
+
+Show:
+* current streak
+* multiplier bonus
+
+---
+
+### 🏆 GAMIFICATION
+
+#### Achievements Page
+* Locked vs unlocked
+* Progress bar
+
+#### Badges Page
+* Rarity:
+  - common
+  - rare
+  - epic
+  - legendary
+
+#### XP System
+* Animated XP bar
+* Level up modal (with confetti 🎉)
+
+---
+
+### 🎯 CHALLENGES
+
+* List challenges
+* Join / Leave
+* Progress tracking
+* Challenge leaderboard
+* Reward preview
+
+---
+
+### 📊 LEADERBOARD
+
+Tabs:
+* Global
+* Daily
+* Weekly
+* Monthly
+
+Display:
+* Rank
+* Username
+* Score
+* Highlight current user
+
+---
+
+### 👥 SOCIAL
+
+#### Friends:
+* Add / Accept / Reject
+* Friend list
+* Block system
+
+#### Study Rooms:
+* Create / Join
+* Roles:
+  - owner
+  - moderator
+  - member
+* Show participants
+* Live session timer
+
+Build a real-time multiplayer lobby (study room) UI for a gamified productivity app.
+
+Features:
+* Member list with avatars and status (idle, ready, focusing)
+* Role badges (owner, moderator)
+* Ready system
+* Start session button (owner only)
+* Real-time activity feed
+* Pomodoro session timer
+* Clean modern UI with Tailwind
+* Smooth animations (Framer Motion)
+* Dark mode
+
+Make it feel like a game lobby (similar to Discord + online game rooms).
+---
+
+### 📅 CALENDAR & SCHEDULING
+
+* Monthly & Weekly view
+* Drag & drop tasks
+* Show:
+  - schedules
+  - reminders
+  - events
+
+---
+
+### 🔔 REMINDERS
+
+* List reminders
+* Status:
+  - pending / sent
+* Type:
+  - email / push
+
+---
+
+### 🎁 REWARDS
+
+#### Daily Reward:
+* Claim button
+* Streak multiplier
+
+#### Spin Wheel:
+* Animated spinning wheel
+* Random rewards:
+  - XP
+  - badge
+  - item
+  - theme
+
+---
+
+### 💬 ACTIVITY FEED
+
+* Infinite scroll
+* Show:
+  - task completed
+  - level up
+  - joined room
+
+---
+
+## 🧩 REUSABLE COMPONENTS
+
+Create:
+
+* TaskCard (Monster HP)
+* XPBar
+* PomodoroTimer
+* LeaderboardList
+* AchievementCard
+* BadgeCard
+* ChallengeCard
+* StudyRoomCard
+* ActivityItem
+* Modal (global)
+* Toast notification system
+
+---
+
+## ⚡ UX INTERACTIONS
+
+* Smooth transitions between pages
+* Skeleton loading
+* Microinteractions:
+  - button hover effects
+  - HP reduction animation
+* Confetti on level up
+* Optional sound effects
+
+---
+
+## 📈 PERFORMANCE
+
+* Lazy loading pages
+* Code splitting
+* Memoization where needed
+* Avoid unnecessary re-renders
+
+---
+
+## 🔐 AUTH
+
+* Login / Register UI
+* Token storage
+* Protected routes
+* Auto redirect if not authenticated
+
+---
+
+## 🚀 OUTPUT REQUIREMENT
+
+* Clean, readable, scalable code
+* Fully typed (Javascript)
+* Responsive (mobile-first)
+* Production-ready UI
+* Modern UX that feels alive and interactive
+
+
+##Alert
+* DO NOT USE EMOJI
+---
+
+PLEASE READ FIRST FOLDER
+/backend (Laravel)
+   /controllers
+   /api.php
+   /migrations
+
+IMPORTANT:
+Do NOT create basic UI. 
+You MUST redesign everything to feel premium, interactive, and gamified.
+Make it visually impressive and fun to use.
