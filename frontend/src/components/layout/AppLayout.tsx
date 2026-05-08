@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Home, CheckSquare, Timer, Trophy, Users, Calendar, LayoutDashboard, Settings, Sun, Moon } from 'lucide-react';
-import { useAppStore } from '../../store/useAppStore';
-import { cn } from '../../utils/cn';
+import type { ReactNode } from 'react'
+import { NavLink } from 'react-router-dom'
+import { CheckSquare, Timer, Trophy, Users, Calendar, LayoutDashboard, Sun, Moon } from 'lucide-react'
+import { useAppStore } from '../../store/useAppStore'
+import { cn } from '../../utils/cn'
 
 interface AppLayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const SIDEBAR_ITEMS = [

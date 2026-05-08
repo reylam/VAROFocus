@@ -4,21 +4,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import { fetchCurrentUser } from './services/auth'
 import useAuthStore from './store/authStore'
 
 const queryClient = new QueryClient()
 
 function Root() {
-  const setUser = useAuthStore((state) => state.setUser)
+  const checkAuth = useAuthStore((state) => state.checkAuth)
 
   useEffect(() => {
-    void fetchCurrentUser()
-      .then(setUser)
-      .catch(() => {
-        localStorage.removeItem('auth_token')
-      })
-  }, [setUser])
+    void checkAuth()
+  }, [checkAuth])
 
   return (
     <QueryClientProvider client={queryClient}>

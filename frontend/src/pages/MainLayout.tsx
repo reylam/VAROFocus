@@ -1,5 +1,5 @@
 import { Outlet, Link } from 'react-router-dom'
-import { Moon, Sun, Zap } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { Sidebar } from '../components/shared/Sidebar'
 import { ToastProvider } from '../components/shared/ToastProvider'
 import useAuthStore from '../store/authStore'

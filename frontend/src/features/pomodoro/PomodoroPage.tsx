@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Play, Pause, X } from 'lucide-react'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import useUiStore from '../../store/uiStore'
+import { startPomodoroSession, completePomodoroSession, getTodayStats } from '../../services/pomodoro'
 
 function formatTime(seconds: number) {
   const minutes = Math.floor(seconds / 60)
@@ -11,24 +13,81 @@ function formatTime(seconds: number) {
 }
 
 export function PomodoroPage() {
-  const [seconds, setSeconds] = useState(25 * 60)
+  const [timeRemaining, setTimeRemaining] = useState(25 * 60)
   const [running, setRunning] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const addToast = useUiStore((state) => state.addToast)
 
+  const { data: todayStats = { today_sessions: 0, today_minutes: 0, weekly_sessions: 0, weekly_minutes: 0, total_sessions: 0, average_session_length: 0 } } = useQuery({
+    queryKey: ['pomodoro-today'],
+    queryFn: getTodayStats,
+  })
+
+  const startMutation = useMutation({
+    mutationFn: () => startPomodoroSession({ duration_minutes: 25, break_minutes: 5 }),
+    onSuccess: (data) => {
+      setSessionId(data.id)
+      setRunning(true)
+      addToast({ title: 'Pomodoro started', description: 'Focus mode engaged. 25 minutes begins now.', variant: 'success' })
+    },
+    onError: () => {
+      addToast({ title: 'Start failed', description: 'Could not start session.', variant: 'warning' })
+    },
+  })
+
+  const completeMutation = useMutation({
+    mutationFn: () => completePomodoroSession(sessionId!),
+    onSuccess: (data) => {
+      setRunning(false)
+      setTimeRemaining(25 * 60)
+      setSessionId(null)
+      addToast({ 
+        title: 'Session complete', 
+        description: `You earned ${data.xp_earned ?? 25} XP.`, 
+        variant: 'success' 
+      })
+    },
+    onError: () => {
+      addToast({ title: 'Complete failed', description: 'Could not complete the session.', variant: 'warning' })
+    },
+  })
+
+  useEffect(() => {
+    if (!running) return
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          setRunning(false)
+          if (sessionId) completeMutation.mutate()
+          return 25 * 60
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [running, sessionId, completeMutation])
+
   const startTimer = () => {
-    setRunning(true)
-    addToast({ title: 'Pomodoro started', description: 'Focus mode engaged.', variant: 'success' })
+    if (running) {
+      setRunning(false)
+      addToast({ title: 'Paused', description: 'Your session is paused.', variant: 'info' })
+    } else {
+      startMutation.mutate()
+    }
   }
 
   const pauseTimer = () => {
     setRunning(false)
-    addToast({ title: 'Paused', description: 'Your session is still live.', variant: 'info' })
+    addToast({ title: 'Paused', description: 'Your session is paused.', variant: 'info' })
   }
 
   const resetTimer = () => {
     setRunning(false)
-    setSeconds(25 * 60)
-    addToast({ title: 'Reset', description: 'Timer restored for the next round.', variant: 'warning' })
+    setTimeRemaining(25 * 60)
+    setSessionId(null)
+    addToast({ title: 'Reset', description: 'Timer restored.', variant: 'warning' })
   }
 
   return (
@@ -46,7 +105,7 @@ export function PomodoroPage() {
           <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Current session</p>
           <div className="mt-8 flex items-center justify-center">
             <div className="flex h-48 w-48 items-center justify-center rounded-full bg-slate-900 text-5xl font-semibold text-white shadow-glow">
-              {formatTime(seconds)}
+              {formatTime(timeRemaining)}
             </div>
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -67,8 +126,8 @@ export function PomodoroPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              { label: 'Current streak', value: '3 sessions' },
-              { label: 'Next bonus', value: 'x1.5 XP' },
+              { label: 'Today sessions', value: `${todayStats.today_sessions ?? 0}` },
+              { label: 'Minutes today', value: `${todayStats.today_minutes ?? 0}` },
             ].map((item) => (
               <div key={item.label} className="rounded-3xl border border-white/10 bg-slate-900/80 p-5">
                 <p className="text-xs uppercase tracking-[0.32em] text-slate-500">{item.label}</p>

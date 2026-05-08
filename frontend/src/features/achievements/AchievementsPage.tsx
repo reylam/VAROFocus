@@ -1,4 +1,4 @@
-import { Sparkles, BadgeCheck, Star } from 'lucide-react'
+import { BadgeCheck, Star } from 'lucide-react'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 

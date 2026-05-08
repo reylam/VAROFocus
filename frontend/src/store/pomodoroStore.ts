@@ -1,42 +1,51 @@
-import { create } from 'zustand'
-import { PomodoroSession, PomodoroStreak } from '../types'
+import { create } from 'zustand';
 
 interface PomodoroState {
-  activeSession: PomodoroSession | null
-  streak: PomodoroStreak | null
-  isRunning: boolean
-  timeRemaining: number
-  sessionsToday: number
-  setActiveSession: (session: PomodoroSession | null) => void
-  setStreak: (streak: PomodoroStreak | null) => void
-  setIsRunning: (running: boolean) => void
-  setTimeRemaining: (time: number) => void
-  setSessionsToday: (count: number) => void
-  resetSession: () => void
-  incrementSessionsToday: () => void
+  activeSessionId: string | null;
+  timeRemaining: number;
+  isRunning: boolean;
+  sessionDuration: number;
+
+  startSession: (sessionId: string, duration: number) => void;
+  pauseSession: () => void;
+  resumeSession: () => void;
+  tick: () => void;
+  endSession: () => void;
 }
 
 const usePomodoroStore = create<PomodoroState>((set) => ({
-  activeSession: null,
-  streak: null,
+  activeSessionId: null,
+  timeRemaining: 25 * 60,
   isRunning: false,
-  timeRemaining: 25 * 60, // 25 minutes in seconds
-  sessionsToday: 0,
-  setActiveSession: (session) => set({ activeSession: session }),
-  setStreak: (streak) => set({ streak }),
-  setIsRunning: (running) => set({ isRunning: running }),
-  setTimeRemaining: (time) => set({ timeRemaining: time }),
-  setSessionsToday: (count) => set({ sessionsToday: count }),
-  resetSession: () =>
-    set({
-      activeSession: null,
-      isRunning: false,
-      timeRemaining: 25 * 60,
-    }),
-  incrementSessionsToday: () =>
-    set((state) => ({
-      sessionsToday: state.sessionsToday + 1,
-    })),
-}))
+  sessionDuration: 25 * 60,
 
-export default usePomodoroStore
+  startSession: (sessionId, duration) =>
+    set({
+      activeSessionId: sessionId,
+      timeRemaining: duration * 60,
+      sessionDuration: duration * 60,
+      isRunning: true,
+    }),
+
+  pauseSession: () => set({ isRunning: false }),
+
+  resumeSession: () => set({ isRunning: true }),
+
+  tick: () =>
+    set((state) => {
+      const newTime = Math.max(0, state.timeRemaining - 1);
+      if (newTime === 0) {
+        return { timeRemaining: newTime, isRunning: false };
+      }
+      return { timeRemaining: newTime };
+    }),
+
+  endSession: () =>
+    set({
+      activeSessionId: null,
+      timeRemaining: 0,
+      isRunning: false,
+    }),
+}));
+
+export default usePomodoroStore;

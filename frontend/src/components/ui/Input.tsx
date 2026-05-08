@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from 'react'
+import type { InputHTMLAttributes } from 'react'
 import clsx from '../../utils/clsx'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -32,8 +32,8 @@ export function Input({
         <input
           className={clsx(
             'w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white placeholder-slate-500 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
-            icon && 'pl-12',
-            error && 'border-red-500/50 focus:ring-red-500/20',
+            icon ? 'pl-12' : '',
+            error ? 'border-red-500/50 focus:ring-red-500/20' : '',
             className,
           )}
           {...props}

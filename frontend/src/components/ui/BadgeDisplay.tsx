@@ -1,5 +1,5 @@
+import type { BadgeRarity } from '../../types'
 import clsx from '../../utils/clsx'
-import { BadgeRarity } from '../../types'
 
 interface BadgeDisplayProps {
   name: string

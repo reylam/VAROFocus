@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion'
-import { ArrowRight, Flame, Sparkles, Trophy } from 'lucide-react'
+import { ArrowRight, Flame } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchTasks } from '../../services/tasks'
 import useAuthStore from '../../store/authStore'
@@ -10,7 +9,10 @@ import { Button } from '../../components/ui/Button'
 
 export function DashboardPage() {
   const user = useAuthStore((state) => state.user)
-  const { data: tasks, isLoading } = useQuery(['tasks'], fetchTasks)
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: fetchTasks
+  })
 
   return (
     <main className="space-y-8 pb-12">
@@ -101,12 +103,12 @@ export function DashboardPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          {isLoading ? (
-            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8 text-slate-400">Loading monsters…</div>
-          ) : (
+          {tasks && tasks.length > 0 ? (
             tasks?.slice(0, 4).map((task) => (
               <TaskCard key={task.id} task={task} onAttack={() => undefined} />
             ))
+          ) : (
+            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8 text-slate-400">No active tasks</div>
           )}
         </div>
       </section>

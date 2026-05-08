@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
-import { ShieldCheck, Sparkles } from 'lucide-react'
-import { Task } from '../../types'
+import { Sparkles } from 'lucide-react'
+import type { Task } from '../../types'
 import { Button } from '../ui/Button'
 import clsx from '../../utils/clsx'
 
 interface TaskCardProps {
   task: Task
-  onAttack: (id: number) => void
+  onAttack: (id: string) => void
 }
 
 const difficultyStyles = {
@@ -28,14 +28,13 @@ export function TaskCard({ task, onAttack }: TaskCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.32em] text-slate-400">
-            <ShieldCheck size={14} />
             {task.difficulty}
           </div>
           <h3 className="mt-4 text-xl font-semibold text-white">{task.title}</h3>
           <p className="mt-2 text-sm leading-6 text-slate-400">{task.description}</p>
         </div>
         <div className="flex flex-col items-end gap-2 text-right text-xs uppercase tracking-[0.24em] text-slate-500">
-          <span>{task.cheers} cheers</span>
+          <span>{task.cheers_count || 0} cheers</span>
           <span className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">Priority {task.priority}</span>
         </div>
       </div>

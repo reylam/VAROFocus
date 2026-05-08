@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Achievement, Badge, UserBadge } from '../types'
+import type { Achievement, Badge, UserBadge } from '../types'
 
 interface GamificationState {
   achievements: Achievement[]

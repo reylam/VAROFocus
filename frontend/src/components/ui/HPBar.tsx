@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import clsx from '../../utils/clsx'
 
 interface HPBarProps {
   current: number
@@ -52,5 +53,3 @@ export function HPBar({ current, max, label, size = 'md' }: HPBarProps) {
     </div>
   )
 }
-
-import clsx from '../../utils/clsx'

@@ -1,4 +1,5 @@
-import { ReactNode, useEffect } from 'react'
+import type { ReactNode } from 'react'
+import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 
@@ -11,18 +12,11 @@ interface ModalProps {
   showCloseButton?: boolean
 }
 
-const sizeClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-}
-
 export function Modal({
   isOpen,
   onClose,
   title,
   children,
-  size = 'md',
   showCloseButton = true,
 }: ModalProps) {
   useEffect(() => {

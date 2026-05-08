@@ -8,14 +8,18 @@ import { Button } from '../../components/ui/Button'
 import useUiStore from '../../store/uiStore'
 
 export function TasksPage() {
-  const { data: tasks = [], isLoading } = useQuery(['tasks'], fetchTasks)
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: fetchTasks
+  })
   const addToast = useUiStore((state) => state.addToast)
-  const mutation = useMutation(attackMonster, {
+  const mutation = useMutation({
+    mutationFn: attackMonster,
     onSuccess: () => {
       addToast({ title: 'Attack landed', description: 'Monster HP updated.', variant: 'success' })
     },
     onError: () => {
-      addToast({ title: 'Attack failed', description: 'Try again later.', variant: 'danger' })
+      addToast({ title: 'Attack failed', description: 'Try again later.', variant: 'warning' })
     },
   })
 
@@ -35,9 +39,7 @@ export function TasksPage() {
       </header>
 
       <Card className="grid gap-4 lg:grid-cols-2">
-        {isLoading ? (
-          <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8 text-slate-400">Loading tasks…</div>
-        ) : activeTasks.length === 0 ? (
+        {activeTasks.length === 0 ? (
           <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8 text-slate-400">No active monsters right now. Create one to start your quest.</div>
         ) : (
           activeTasks.map((task) => (

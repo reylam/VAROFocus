@@ -1,5 +1,5 @@
+import type { Task } from '../types'
 import api from './api'
-import { Task } from '../types'
 
 export async function fetchTasks() {
   const { data } = await api.get<Task[]>('/tasks')
@@ -11,12 +11,12 @@ export async function createTask(task: Partial<Task>) {
   return data
 }
 
-export async function attackMonster(id: number) {
+export async function attackMonster(id: string) {
   const { data } = await api.post<Task>(`/tasks/${id}/attack-monster`)
   return data
 }
 
-export async function completeTask(id: number) {
+export async function completeTask(id: string) {
   const { data } = await api.post<Task>(`/tasks/${id}/complete`)
   return data
 }

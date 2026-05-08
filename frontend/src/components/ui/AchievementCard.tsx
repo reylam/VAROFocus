@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Lock } from 'lucide-react'
-import { Achievement } from '../../types'
+import type { Achievement } from '../../types'
 import clsx from '../../utils/clsx'
 
 interface AchievementCardProps {

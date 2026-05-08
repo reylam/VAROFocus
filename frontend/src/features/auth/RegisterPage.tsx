@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { register } from '../../services/auth'
 import useAuthStore from '../../store/authStore'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -9,7 +8,7 @@ import useUiStore from '../../store/uiStore'
 
 export function RegisterPage() {
   const navigate = useNavigate()
-  const setUser = useAuthStore((state) => state.setUser)
+  const register = useAuthStore((state) => state.register)
   const addToast = useUiStore((state) => state.addToast)
   const queryClient = useQueryClient()
   const [name, setName] = useState('')
@@ -17,15 +16,21 @@ export function RegisterPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const mutation = useMutation(register, {
-    onSuccess: (data) => {
-      setUser(data.user)
-      queryClient.invalidateQueries(['user'])
+  const mutation = useMutation({
+    mutationFn: (payload: { name: string; email: string; password: string; password_confirmation: string }) =>
+      register({
+        username: payload.name,
+        email: payload.email,
+        password: payload.password,
+        password_confirmation: payload.password_confirmation,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] })
       addToast({ title: 'Account created', description: 'Welcome to VAROFocus.', variant: 'success' })
       navigate('/dashboard')
     },
     onError: () => {
-      addToast({ title: 'Registration failed', description: 'Please verify your fields.', variant: 'danger' })
+      addToast({ title: 'Registration failed', description: 'Please verify your fields.', variant: 'warning' })
     },
   })
 
@@ -86,7 +91,7 @@ export function RegisterPage() {
             />
           </label>
           <Button type="submit" className="w-full" size="lg">
-            {mutation.isLoading ? 'Creating account...' : 'Create account'}
+            {mutation.isPending ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
 

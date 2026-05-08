@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Activity, Sparkles, ShieldCheck, Clock3, Trophy, Users2, Fire } from 'lucide-react'
+import { Activity, Sparkles, ShieldCheck, Clock3, Trophy, Users2 } from 'lucide-react'
 import useAuthStore from '../../store/authStore'
 import { Button } from '../ui/Button'
 

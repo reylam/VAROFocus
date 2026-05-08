@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { login } from '../../services/auth'
 import useAuthStore from '../../store/authStore'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -9,21 +8,21 @@ import useUiStore from '../../store/uiStore'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const setUser = useAuthStore((state) => state.setUser)
+  const login = useAuthStore((state) => state.login)
   const addToast = useUiStore((state) => state.addToast)
   const queryClient = useQueryClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const mutation = useMutation(login, {
-    onSuccess: (data) => {
-      setUser(data.user)
-      queryClient.invalidateQueries(['user'])
+  const mutation = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) => login({ email, password }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] })
       addToast({ title: 'Welcome back', description: 'Your focus session is ready.', variant: 'success' })
       navigate('/dashboard')
     },
     onError: () => {
-      addToast({ title: 'Login failed', description: 'Check your credentials and try again.', variant: 'danger' })
+      addToast({ title: 'Login failed', description: 'Check your credentials and try again.', variant: 'warning' })
     },
   })
 
@@ -64,7 +63,7 @@ export function LoginPage() {
             />
           </label>
           <Button type="submit" className="w-full" size="lg">
-            {mutation.isLoading ? 'Signing in...' : 'Sign in'}
+            {mutation.isPending ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
 
