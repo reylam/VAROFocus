@@ -1,17 +1,23 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+  import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { pomodoroAPI } from '@/api/pomodoro';
 import type { CreatePomodoroSessionPayload } from '@/types/models';
 
 export const usePomodoroSessions = () =>
   useQuery({
     queryKey: ['pomodoroSessions'],
-    queryFn: () => pomodoroAPI.listSessions(),
+    queryFn: async () => {
+      const response = await pomodoroAPI.listSessions()
+      return response.data
+    },
   });
 
 export const usePomodoroSession = (id: string) =>
   useQuery({
     queryKey: ['pomodoroSession', id],
-    queryFn: () => pomodoroAPI.getSession(id),
+    queryFn: async () => {
+      const response = await pomodoroAPI.getSession(id)
+      return response.data
+    },
   });
 
 export const useCreatePomodoroSession = () => {

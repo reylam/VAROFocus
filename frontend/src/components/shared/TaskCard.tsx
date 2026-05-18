@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
-import type { Task } from '../../types'
+import type { Task } from '@/types/models'
 import { Button } from '../ui/Button'
 import clsx from '../../utils/clsx'
 
@@ -17,7 +17,11 @@ const difficultyStyles = {
 }
 
 export function TaskCard({ task, onAttack }: TaskCardProps) {
-  const hpProgress = Math.max(0, Math.round((task.hp / task.max_hp) * 100))
+  const monster = Array.isArray(task.monster) ? task.monster[0] : task.monster
+  const currentHp = monster?.current_hp ?? task.current_hp
+  const maxHp = monster?.max_hp ?? task.hp
+  const cheersCount = task.cheers?.length ?? task.cheers_count ?? 0
+  const hpProgress = maxHp > 0 ? Math.max(0, Math.round((currentHp / maxHp) * 100)) : 0
 
   return (
     <motion.article
@@ -34,7 +38,7 @@ export function TaskCard({ task, onAttack }: TaskCardProps) {
           <p className="mt-2 text-sm leading-6 text-slate-400">{task.description}</p>
         </div>
         <div className="flex flex-col items-end gap-2 text-right text-xs uppercase tracking-[0.24em] text-slate-500">
-          <span>{task.cheers_count || 0} cheers</span>
+          <span>{cheersCount} cheers</span>
           <span className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">Priority {task.priority}</span>
         </div>
       </div>
@@ -42,7 +46,7 @@ export function TaskCard({ task, onAttack }: TaskCardProps) {
       <div className="mt-5 space-y-3">
         <div className="flex items-center justify-between text-sm text-slate-300">
           <span>Monster HP</span>
-          <span>{task.hp}/{task.max_hp}</span>
+          <span>{currentHp}/{maxHp}</span>
         </div>
         <div className="h-3 overflow-hidden rounded-full bg-slate-800">
           <motion.div

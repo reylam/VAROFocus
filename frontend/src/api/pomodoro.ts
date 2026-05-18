@@ -1,12 +1,12 @@
 import apiClient from './apiClient';
-import type { PomodoroSession, CreatePomodoroSessionPayload, PomodoroStreak } from '@/types/models';
+import type { PomodoroSession, CreatePomodoroSessionPayload, PomodoroStreak, PaginatedResponse } from '@/types/models';
 
 export const pomodoroAPI = {
   listSessions: () =>
-    apiClient.get<PomodoroSession[]>('/pomodoro-sessions'),
+    apiClient.get<PaginatedResponse<PomodoroSession>>('/pomodoro-sessions'),
 
   createSession: (data: CreatePomodoroSessionPayload) =>
-    apiClient.post<PomodoroSession>('/pomodoro-sessions', data),
+    apiClient.post<{ message: string; session: PomodoroSession }>('/pomodoro-sessions', data),
 
   getSession: (id: string) =>
     apiClient.get<PomodoroSession>(`/pomodoro-sessions/${id}`),
@@ -18,10 +18,10 @@ export const pomodoroAPI = {
     apiClient.delete(`/pomodoro-sessions/${id}`),
 
   completeSession: (id: string) =>
-    apiClient.post(`/pomodoro-sessions/${id}/complete`),
+    apiClient.post<{ message: string; session: PomodoroSession; xp_earned: number }>(`/pomodoro-sessions/${id}/complete`),
 
   cancelSession: (id: string) =>
-    apiClient.post(`/pomodoro-sessions/${id}/cancel`),
+    apiClient.post<{ message: string; session: PomodoroSession }>(`/pomodoro-sessions/${id}/cancel`),
 
   getTodayStats: () =>
     apiClient.get('/pomodoro-sessions/today-stats'),

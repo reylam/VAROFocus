@@ -10,7 +10,7 @@ export const authAPI = {
 
   logout: () => apiClient.post('/auth/logout'),
 
-  me: () => apiClient.get<User>('/auth/me'),
+  me: () => apiClient.get<{ user: User; progress_to_next_level: number }>('/auth/me'),
 
-  refreshToken: () => apiClient.post<AuthResponse>('/auth/refresh-token'),
+  refreshToken: () => apiClient.post<{ message: string; token: string }>('/auth/refresh-token'),
 };

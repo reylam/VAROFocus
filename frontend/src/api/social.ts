@@ -8,6 +8,7 @@ import type {
   Challenge,
   CreateChallengePayload,
   PaginatedResponse,
+  User,
 } from '@/types/models';
 
 export const friendsAPI = {
@@ -48,14 +49,14 @@ export const friendRequestsAPI = {
 };
 
 export const studyRoomsAPI = {
-  list: () =>
-    apiClient.get<StudyRoom[]>('/study-rooms'),
+  list: (params?: { limit?: number; is_private?: boolean }) =>
+    apiClient.get<PaginatedResponse<StudyRoom>>('/study-rooms', { params }),
 
   create: (data: CreateStudyRoomPayload) =>
-    apiClient.post<StudyRoom>('/study-rooms', data),
+    apiClient.post<{ message: string; room: StudyRoom }>('/study-rooms', data),
 
   get: (id: string) =>
-    apiClient.get<StudyRoom>(`/study-rooms/${id}`),
+    apiClient.get<{ room: StudyRoom; stats?: Record<string, any> }>(`/study-rooms/${id}`),
 
   update: (id: string, data: Partial<StudyRoom>) =>
     apiClient.put<StudyRoom>(`/study-rooms/${id}`, data),
@@ -78,17 +79,17 @@ export const studyRoomsAPI = {
   setMemberRole: (id: string, userId: string, role: string) =>
     apiClient.post(`/study-rooms/${id}/set-role`, { user_id: userId, role }),
 
-  getMembers: (id: string) =>
-    apiClient.get(`/study-rooms/${id}/members`),
+  getMembers: (id: string, params?: { limit?: number }) =>
+    apiClient.get<PaginatedResponse<User>>(`/study-rooms/${id}/members`, { params }),
 
   getSessions: (id: string) =>
     apiClient.get<RoomSession[]>(`/study-rooms/${id}/sessions`),
 
-  getRecommended: () =>
-    apiClient.get<StudyRoom[]>('/study-rooms/recommended'),
+  getRecommended: (limit = 20) =>
+    apiClient.get<PaginatedResponse<StudyRoom>>('/study-rooms/recommended', { params: { limit } }),
 
-  getUserRooms: () =>
-    apiClient.get<StudyRoom[]>('/study-rooms/my-rooms'),
+  getUserRooms: (limit = 10) =>
+    apiClient.get<PaginatedResponse<StudyRoom>>('/study-rooms/my-rooms', { params: { limit } }),
 };
 
 export const roomSessionsAPI = {
@@ -125,13 +126,13 @@ export const challengesAPI = {
     apiClient.get<PaginatedResponse<Challenge>>('/challenges'),
 
   create: (data: CreateChallengePayload) =>
-    apiClient.post<Challenge>('/challenges', data),
+    apiClient.post<{ message: string; challenge: Challenge }>('/challenges', data),
 
   get: (id: string) =>
-    apiClient.get<Challenge>(`/challenges/${id}`),
+    apiClient.get<{ challenge: Challenge; user_participation?: any; participant_count?: number; completed_count?: number }>(`/challenges/${id}`),
 
   update: (id: string, data: Partial<Challenge>) =>
-    apiClient.put<Challenge>(`/challenges/${id}`, data),
+    apiClient.put<{ message: string; challenge: Challenge }>(`/challenges/${id}`, data),
 
   delete: (id: string) =>
     apiClient.delete(`/challenges/${id}`),
@@ -142,11 +143,11 @@ export const challengesAPI = {
   leave: (id: string) =>
     apiClient.post(`/challenges/${id}/leave`),
 
-  getActive: () =>
-    apiClient.get<Challenge[]>('/challenges/active'),
+  getActive: (limit = 20) =>
+    apiClient.get<PaginatedResponse<Challenge>>('/challenges/active', { params: { limit } }),
 
-  getUserChallenges: () =>
-    apiClient.get<Challenge[]>('/challenges/my-challenges'),
+  getUserChallenges: (limit = 10) =>
+    apiClient.get<PaginatedResponse<Challenge>>('/challenges/my-challenges', { params: { limit } }),
 
   getParticipants: (id: string) =>
     apiClient.get(`/challenges/${id}/participants`),

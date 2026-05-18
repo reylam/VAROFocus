@@ -1,18 +1,16 @@
 import { ArrowRight, Flame } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { fetchTasks } from '../../services/tasks'
 import useAuthStore from '../../store/authStore'
 import { Card } from '../../components/ui/Card'
 import { XPBar } from '../../components/shared/XPBar'
 import { TaskCard } from '../../components/shared/TaskCard'
 import { Button } from '../../components/ui/Button'
+import { useTasks } from '../../hooks/useTaskHooks'
 
 export function DashboardPage() {
   const user = useAuthStore((state) => state.user)
-  const { data: tasks = [] } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: fetchTasks
-  })
+  const { data: tasksResponse } = useTasks()
+  const tasks = tasksResponse?.data ?? []
+  const username = user?.username || 'Champion'
 
   return (
     <main className="space-y-8 pb-12">
@@ -21,7 +19,7 @@ export function DashboardPage() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Warrior profile</p>
-              <h1 className="mt-3 text-4xl font-semibold text-white">Welcome back, {user?.name || 'Champion'}</h1>
+              <h1 className="mt-3 text-4xl font-semibold text-white">Welcome back, {username}</h1>
               <p className="mt-3 max-w-2xl text-slate-300">Your focus guild is ready. Attack monsters, claim rewards, and keep the streak alive.</p>
             </div>
             <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/90 p-5 text-center shadow-soft">

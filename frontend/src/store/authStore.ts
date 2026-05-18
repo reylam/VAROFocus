@@ -32,11 +32,11 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await authAPI.login(credentials);
-          const { access_token, user } = response.data;
+          const { token, user } = response.data;
 
-          localStorage.setItem('auth_token', access_token);
+          localStorage.setItem('auth_token', token);
           set({
-            token: access_token,
+            token,
             user,
             isAuthenticated: true,
             isLoading: false,
@@ -58,11 +58,11 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await authAPI.register(payload);
-          const { access_token, user } = response.data;
+          const { token, user } = response.data;
 
-          localStorage.setItem('auth_token', access_token);
+          localStorage.setItem('auth_token', token);
           set({
-            token: access_token,
+            token,
             user,
             isAuthenticated: true,
             isLoading: false,
@@ -114,7 +114,7 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await authAPI.me();
-          set({ user: response.data, isAuthenticated: true, isLoading: false });
+          set({ user: response.data.user, isAuthenticated: true, isLoading: false });
         } catch {
           get().logout();
           set({ isLoading: false });

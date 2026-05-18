@@ -50,8 +50,7 @@ export interface RegisterPayload {
 }
 
 export interface AuthResponse {
-  access_token: string;
-  token_type: string;
+  token: string;
   user: User;
 }
 
@@ -76,10 +75,13 @@ export interface Task {
   updated_at: string;
 
   category?: Category;
-  monster?: Monster;
+  monster?: Monster | Monster[];
   subTasks?: SubTask[];
   cheers?: TaskCheer[];
   comments?: TaskComment[];
+  cheers_count?: number;
+  comments_count?: number;
+  max_hp?: number;
 }
 
 export interface CreateTaskPayload {
@@ -418,6 +420,8 @@ export interface ActivityLog {
   metadata: Record<string, any>;
   created_at: string;
 }
+
+export type Notification = ActivityLog;
 
 // Friends
 export interface Friend {

@@ -1,29 +1,31 @@
 import { useMemo } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { ArrowRight } from 'lucide-react'
-import { fetchTasks, attackMonster } from '../../services/tasks'
+import { useTasks, useAttackMonster } from '../../hooks/useTaskHooks'
 import { TaskCard } from '../../components/shared/TaskCard'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import useUiStore from '../../store/uiStore'
 
 export function TasksPage() {
-  const { data: tasks = [] } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: fetchTasks
-  })
+  const { data: tasksResponse } = useTasks()
   const addToast = useUiStore((state) => state.addToast)
-  const mutation = useMutation({
-    mutationFn: attackMonster,
-    onSuccess: () => {
-      addToast({ title: 'Attack landed', description: 'Monster HP updated.', variant: 'success' })
-    },
-    onError: () => {
-      addToast({ title: 'Attack failed', description: 'Try again later.', variant: 'warning' })
-    },
-  })
+  const mutation = useAttackMonster()
 
-  const activeTasks = useMemo(() => tasks.filter((task) => task.status !== 'completed'), [tasks])
+  const activeTasks = useMemo(() => tasksResponse?.data?.filter((task) => task.status !== 'completed') ?? [], [tasksResponse])
+
+  const handleAttack = (taskId: string) => {
+    mutation.mutate(
+      { id: taskId, damage: 10, source: 'manual' },
+      {
+        onSuccess: () => {
+          addToast({ title: 'Attack landed', description: 'Monster HP updated.', variant: 'success' })
+        },
+        onError: () => {
+          addToast({ title: 'Attack failed', description: 'Try again later.', variant: 'warning' })
+        },
+      }
+    )
+  }
 
   return (
     <main className="space-y-8 pb-12">
@@ -46,7 +48,7 @@ export function TasksPage() {
             <TaskCard
               key={task.id}
               task={task}
-              onAttack={() => mutation.mutate(task.id)}
+              onAttack={handleAttack}
             />
           ))
         )}

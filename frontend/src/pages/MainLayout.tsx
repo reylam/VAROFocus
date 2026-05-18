@@ -32,7 +32,7 @@ export function MainLayout() {
                 {theme === 'dark' ? 'Light mode' : 'Dark mode'}
               </Button>
               <Link to="/profile" className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-primary hover:text-white">
-                {user?.name || 'Profile'}
+                {user?.username || 'Profile'}
               </Link>
             </div>
           </header>

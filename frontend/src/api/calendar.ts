@@ -1,18 +1,18 @@
 import apiClient from './apiClient';
-import type { Schedule, Reminder, CalendarEvent } from '@/types/models';
+import type { Schedule, Reminder, CalendarEvent, PaginatedResponse } from '@/types/models';
 
 export const schedulesAPI = {
-  list: () =>
-    apiClient.get<Schedule[]>('/schedules'),
+  list: (params?: { limit?: number; page?: number }) =>
+    apiClient.get<PaginatedResponse<Schedule>>('/schedules', { params }),
 
   create: (data: Partial<Schedule>) =>
-    apiClient.post<Schedule>('/schedules', data),
+    apiClient.post<{ message: string; data: Schedule }>('/schedules', data),
 
   get: (id: string) =>
     apiClient.get<Schedule>(`/schedules/${id}`),
 
   update: (id: string, data: Partial<Schedule>) =>
-    apiClient.put<Schedule>(`/schedules/${id}`, data),
+    apiClient.put<{ message: string; data: Schedule }>(`/schedules/${id}`, data),
 
   delete: (id: string) =>
     apiClient.delete(`/schedules/${id}`),
@@ -20,11 +20,11 @@ export const schedulesAPI = {
   getToday: () =>
     apiClient.get<Schedule[]>('/schedules/today'),
 
-  getUpcoming: () =>
-    apiClient.get<Schedule[]>('/schedules/upcoming'),
+  getUpcoming: (days?: number) =>
+    apiClient.get<Schedule[]>('/schedules/upcoming', { params: { days } }),
 
-  getByPriority: (priority: number) =>
-    apiClient.get<Schedule[]>(`/schedules/by-priority/${priority}`),
+  getByPriority: (priority: string, limit = 20) =>
+    apiClient.get<PaginatedResponse<Schedule>>(`/schedules/by-priority/${priority}`, { params: { limit } }),
 
   getStats: () =>
     apiClient.get('/schedules/stats'),
@@ -37,29 +37,29 @@ export const schedulesAPI = {
 };
 
 export const remindersAPI = {
-  list: () =>
-    apiClient.get<Reminder[]>('/reminders'),
+  list: (params?: { limit?: number; sent?: boolean }) =>
+    apiClient.get<PaginatedResponse<Reminder>>('/reminders', { params }),
 
   create: (data: Partial<Reminder>) =>
-    apiClient.post<Reminder>('/reminders', data),
+    apiClient.post<{ message: string; data: Reminder }>('/reminders', data),
 
   get: (id: string) =>
     apiClient.get<Reminder>(`/reminders/${id}`),
 
   update: (id: string, data: Partial<Reminder>) =>
-    apiClient.put<Reminder>(`/reminders/${id}`, data),
+    apiClient.put<{ message: string; data: Reminder }>(`/reminders/${id}`, data),
 
   delete: (id: string) =>
     apiClient.delete(`/reminders/${id}`),
 
-  getUpcoming: () =>
-    apiClient.get<Reminder[]>('/reminders/upcoming'),
+  getUpcoming: (hours?: number) =>
+    apiClient.get<Reminder[]>('/reminders/upcoming', { params: { hours } }),
 
   getPending: () =>
     apiClient.get<Reminder[]>('/reminders/pending'),
 
-  getByType: (type: string) =>
-    apiClient.get<Reminder[]>(`/reminders/by-type/${type}`),
+  getByType: (type: string, limit = 20) =>
+    apiClient.get<PaginatedResponse<Reminder>>(`/reminders/by-type/${type}`, { params: { limit } }),
 
   getStats: () =>
     apiClient.get('/reminders/stats'),
@@ -69,17 +69,17 @@ export const remindersAPI = {
 };
 
 export const calendarAPI = {
-  list: () =>
-    apiClient.get<CalendarEvent[]>('/calendar-events'),
+  list: (params?: { limit?: number; sync_service?: string }) =>
+    apiClient.get<PaginatedResponse<CalendarEvent>>('/calendar-events', { params }),
 
   create: (data: Partial<CalendarEvent>) =>
-    apiClient.post<CalendarEvent>('/calendar-events', data),
+    apiClient.post<{ message: string; data: CalendarEvent }>('/calendar-events', data),
 
   get: (id: string) =>
     apiClient.get<CalendarEvent>(`/calendar-events/${id}`),
 
   update: (id: string, data: Partial<CalendarEvent>) =>
-    apiClient.put<CalendarEvent>(`/calendar-events/${id}`, data),
+    apiClient.put<{ message: string; data: CalendarEvent }>(`/calendar-events/${id}`, data),
 
   delete: (id: string) =>
     apiClient.delete(`/calendar-events/${id}`),
@@ -87,8 +87,8 @@ export const calendarAPI = {
   getToday: () =>
     apiClient.get<CalendarEvent[]>('/calendar-events/today'),
 
-  getUpcoming: () =>
-    apiClient.get<CalendarEvent[]>('/calendar-events/upcoming'),
+  getUpcoming: (days?: number) =>
+    apiClient.get<CalendarEvent[]>('/calendar-events/upcoming', { params: { days } }),
 
   getByDate: (date: string) =>
     apiClient.get<CalendarEvent[]>(`/calendar-events/by-date/${date}`),
@@ -102,12 +102,12 @@ export const calendarAPI = {
   getSyncStats: () =>
     apiClient.get('/calendar-events/sync-stats'),
 
-  syncGoogle: () =>
-    apiClient.post('/calendar-events/sync-google'),
+  syncGoogle: (token: string) =>
+    apiClient.post('/calendar-events/sync-google', { access_token: token }),
 
   syncApple: () =>
     apiClient.post('/calendar-events/sync-apple'),
 
-  syncOutlook: () =>
-    apiClient.post('/calendar-events/sync-outlook'),
+  syncOutlook: (token: string) =>
+    apiClient.post('/calendar-events/sync-outlook', { access_token: token }),
 };

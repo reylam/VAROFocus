@@ -12,9 +12,11 @@ export const useCurrentUser = () => {
   const queryClient = useQueryClient();
   return useQuery({
     queryKey: ['me'],
-    queryFn: () => authAPI.me(),
-    onSuccess: (data) => {
-      const userData = data.data as User;
+    queryFn: async () => {
+      const response = await authAPI.me();
+      return response.data.user;
+    },
+    onSuccess: (userData: User) => {
       queryClient.setQueryData(['me'], userData);
     },
   });

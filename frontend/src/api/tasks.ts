@@ -16,7 +16,7 @@ export const tasksAPI = {
     apiClient.post<SuccessResponse<Task>>('/tasks', data),
 
   get: (id: string) =>
-    apiClient.get<SuccessResponse<Task>>(`/tasks/${id}`),
+    apiClient.get<{ task: Task; stats?: Record<string, any> }>(`/tasks/${id}`),
 
   update: (id: string, data: UpdateTaskPayload) =>
     apiClient.put<SuccessResponse<Task>>(`/tasks/${id}`, data),
@@ -33,8 +33,11 @@ export const tasksAPI = {
   fail: (id: string) =>
     apiClient.post<SuccessResponse<Task>>(`/tasks/${id}/fail`),
 
-  attackMonster: (id: string) =>
-    apiClient.post(`/tasks/${id}/attack-monster`),
+  attackMonster: (id: string, payload: { damage?: number; source?: string } = {}) =>
+    apiClient.post(`/tasks/${id}/attack-monster`, {
+      damage: payload.damage ?? 10,
+      source: payload.source ?? 'manual',
+    }),
 
   getOverdue: () =>
     apiClient.get<Task[]>('/tasks/overdue'),
