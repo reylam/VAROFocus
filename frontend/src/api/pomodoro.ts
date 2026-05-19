@@ -1,37 +1,19 @@
-import apiClient from './apiClient';
-import type { PomodoroSession, CreatePomodoroSessionPayload, PomodoroStreak, PaginatedResponse } from '@/types/models';
+import apiClient from './apiClient'
+import type { CreatePomodoroSessionPayload, PaginatedResponse, PomodoroSession } from '@/types/models'
 
 export const pomodoroAPI = {
-  listSessions: () =>
-    apiClient.get<PaginatedResponse<PomodoroSession>>('/pomodoro-sessions'),
+  list: () => apiClient.get<PaginatedResponse<PomodoroSession>>('/pomodoro-sessions'),
+  create: (payload: CreatePomodoroSessionPayload) => apiClient.post<{ message: string; session: PomodoroSession }>('/pomodoro-sessions', payload),
+  complete: (id: string) => apiClient.post<{ message: string; session: PomodoroSession; xp_earned?: number }>(`/pomodoro-sessions/${id}/complete`),
+  cancel: (id: string) => apiClient.post<{ message: string; session: PomodoroSession }>(`/pomodoro-sessions/${id}/cancel`),
+  todayStats: () => apiClient.get<Record<string, number>>('/pomodoro-sessions/today-stats'),
+  weeklyStats: () => apiClient.get<Record<string, unknown>>('/pomodoro-sessions/weekly-stats'),
+  streak: () => apiClient.get<Record<string, unknown>>('/pomodoro-streaks/streak'),
+}
 
-  createSession: (data: CreatePomodoroSessionPayload) =>
-    apiClient.post<{ message: string; session: PomodoroSession }>('/pomodoro-sessions', data),
+export const startPomodoroSession = async (payload: CreatePomodoroSessionPayload) => (await pomodoroAPI.create(payload)).data.session
+export const completePomodoroSession = async (id: string) => (await pomodoroAPI.complete(id)).data
+export const cancelPomodoroSession = async (id: string) => (await pomodoroAPI.cancel(id)).data
+export const getTodayStats = async () => (await pomodoroAPI.todayStats()).data
 
-  getSession: (id: string) =>
-    apiClient.get<PomodoroSession>(`/pomodoro-sessions/${id}`),
-
-  updateSession: (id: string, data: Partial<PomodoroSession>) =>
-    apiClient.put<PomodoroSession>(`/pomodoro-sessions/${id}`, data),
-
-  deleteSession: (id: string) =>
-    apiClient.delete(`/pomodoro-sessions/${id}`),
-
-  completeSession: (id: string) =>
-    apiClient.post<{ message: string; session: PomodoroSession; xp_earned: number }>(`/pomodoro-sessions/${id}/complete`),
-
-  cancelSession: (id: string) =>
-    apiClient.post<{ message: string; session: PomodoroSession }>(`/pomodoro-sessions/${id}/cancel`),
-
-  getTodayStats: () =>
-    apiClient.get('/pomodoro-sessions/today-stats'),
-
-  getWeeklyStats: () =>
-    apiClient.get('/pomodoro-sessions/weekly-stats'),
-
-  getStreak: () =>
-    apiClient.get<PomodoroStreak>('/pomodoro-streaks/streak'),
-
-  resetStreak: () =>
-    apiClient.post('/pomodoro-streaks/reset'),
-};
+export default pomodoroAPI

@@ -94,17 +94,17 @@ export function PomodoroPage() {
     <main className="space-y-8 pb-12">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Focus engine</p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Pomodoro drive</h1>
+          <p className="text-sm uppercase tracking-[0.32em] text-[#17937f]">Focus engine</p>
+          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Pomodoro drive</h1>
           <p className="mt-2 text-sm text-slate-500">Launch a session, track streaks, and push XP onto the leaderboard.</p>
         </div>
       </header>
 
       <Card className="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-        <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8 text-center">
-          <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Current session</p>
+        <div className="rounded-[1.5rem] border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Current session</p>
           <div className="mt-8 flex items-center justify-center">
-            <div className="flex h-48 w-48 items-center justify-center rounded-full bg-slate-900 text-5xl font-semibold text-white shadow-glow">
+            <div className="flex h-48 w-48 items-center justify-center rounded-full bg-[#17937f] text-5xl font-semibold text-white shadow-[0_20px_50px_rgba(23,147,127,0.2)]">
               {formatTime(timeRemaining)}
             </div>
           </div>
@@ -118,20 +118,20 @@ export function PomodoroPage() {
           </div>
         </div>
 
-        <div className="space-y-5 rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8">
+        <div className="space-y-5 rounded-[1.5rem] border border-slate-200 bg-white p-8 shadow-sm">
           <div className="space-y-2">
-            <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Streak bonus</p>
-            <h2 className="text-2xl font-semibold text-white">Multiplier active</h2>
-            <p className="text-sm text-slate-400">Complete consecutive sessions to stack XP and reward boosts.</p>
+            <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Streak bonus</p>
+            <h2 className="text-2xl font-semibold text-slate-900">Multiplier active</h2>
+            <p className="text-sm text-slate-600">Complete consecutive sessions to stack XP and reward boosts.</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
               { label: 'Today sessions', value: `${todayStats.today_sessions ?? 0}` },
               { label: 'Minutes today', value: `${todayStats.today_minutes ?? 0}` },
             ].map((item) => (
-              <div key={item.label} className="rounded-3xl border border-white/10 bg-slate-900/80 p-5">
+              <div key={item.label} className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                 <p className="text-xs uppercase tracking-[0.32em] text-slate-500">{item.label}</p>
-                <p className="mt-3 text-xl font-semibold text-white">{item.value}</p>
+                <p className="mt-3 text-xl font-semibold text-slate-900">{item.value}</p>
               </div>
             ))}
           </div>

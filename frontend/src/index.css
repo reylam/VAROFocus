@@ -6,48 +6,49 @@
   :root {
     --background: 220 30% 96%; /* Light slate/blueish grey */
     --foreground: 222 47% 11%;
-    
+
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    
-    --primary: 188 100% 50%; /* Neon Blue */
+
+    /* Primary and secondary colors set to exact brand hexs converted to HSL */
+    --primary: 170 73% 33%; /* #17937f */
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 300 100% 50%; /* Pink / Purple */
+
+    --secondary: 35 95% 55%; /* #f99f1e */
     --secondary-foreground: 0 0% 100%;
-    
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-    
+
+    --accent: 36 94% 54%;
+    --accent-foreground: 0 0% 100%;
+
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-    
+
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 222 84% 5%;
-    
+
     --radius: 1rem;
   }
 
   .dark {
     --background: 222 47% 7%; /* Darker modern background */
     --foreground: 210 40% 98%;
-    
+
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-    
-    --primary: 188 100% 50%; /* Neon Blue */
+
+    --primary: 170 73% 33%; /* #17937f */
     --primary-foreground: 222 47% 11%;
-    
-    --secondary: 300 100% 50%; /* Pink / Purple */
+
+    --secondary: 35 95% 55%; /* #f99f1e */
     --secondary-foreground: 222 47% 11%;
-    
-    --accent: 217 33% 17%;
+
+    --accent: 36 94% 54%;
     --accent-foreground: 210 40% 98%;
-    
+
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-    
+
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 212 96% 61%;

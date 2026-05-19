@@ -7,6 +7,7 @@ use App\Models\RoomSession;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Validator;
+
 class StudyRoomController extends Controller
 {
     public function index(Request $request)
@@ -14,9 +15,8 @@ class StudyRoomController extends Controller
         $limit = $request->get('limit', 20);
         $isPrivate = $request->get('is_private');
 
-        $query = StudyRoom::with(['owner:id,username,avatar_url', 'members' => function ($q) {
-            $q->count();
-        }]);
+        $query = StudyRoom::with('owner:id,username,avatar_url')
+            ->withCount('members');
 
         if ($isPrivate !== null) {
             $query->where('is_private', (bool) $isPrivate);
@@ -25,6 +25,19 @@ class StudyRoomController extends Controller
         }
 
         $rooms = $query->paginate($limit);
+
+        return response()->json($rooms);
+    }
+
+    public function getRecommendedRooms(Request $request)
+    {
+        $limit = $request->get('limit', 20);
+
+        $rooms = StudyRoom::with('owner:id,username,avatar_url')
+            ->withCount('members')
+            ->where('is_private', false)
+            ->orderByDesc('members_count')
+            ->paginate($limit);
 
         return response()->json($rooms);
     }
@@ -252,6 +265,7 @@ class StudyRoomController extends Controller
 
         $rooms = $user->studyRooms()
             ->with('owner:id,username,avatar_url')
+            ->withCount('members')
             ->paginate($limit);
 
         return response()->json($rooms);

@@ -1,5 +1,5 @@
 import { Outlet, Link } from 'react-router-dom'
-import { Moon, Sun } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Sidebar } from '../components/shared/Sidebar'
 import { ToastProvider } from '../components/shared/ToastProvider'
 import useAuthStore from '../store/authStore'
@@ -9,35 +9,34 @@ import { useEffect } from 'react'
 
 export function MainLayout() {
   const user = useAuthStore((state) => state.user)
-  const theme = useUiStore((state) => state.theme)
-  const toggleTheme = useUiStore((state) => state.toggleTheme)
+  const setSidebarOpen = useUiStore((state) => state.setSidebarOpen)
 
   useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light')
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }, [theme])
+    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add('light')
+  }, [])
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(79,70,229,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.14),transparent_32%),#05060b] text-white">
-      <div className="mx-auto flex min-h-screen max-w-[1700px] gap-6 px-4 py-6 lg:px-8">
+    <div className="min-h-screen bg-[#f6fbfa] text-slate-900">
+      <div className="flex min-h-screen">
         <Sidebar />
-        <div className="flex min-h-screen flex-1 flex-col gap-6">
-          <header className="flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-slate-950/90 p-5 shadow-soft backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col pl-72">
+          <header className="sticky top-0 z-20 flex flex-col gap-4 border-b border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between lg:px-8">
             <div>
-              <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Mission control</p>
-              <h1 className="mt-2 text-2xl font-semibold text-white">Live focus cockpit</h1>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#17937f]">Mission control</p>
+              <h1 className="mt-1 text-2xl font-semibold text-slate-900">Live focus cockpit</h1>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={toggleTheme} icon={theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}>
-                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => setSidebarOpen(true)} icon={<Menu size={16} />}>
+                Menu
               </Button>
-              <Link to="/profile" className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-primary hover:text-white">
+              <Link to="/dashboard" className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#17937f] hover:text-[#17937f]">
                 {user?.username || 'Profile'}
               </Link>
             </div>
           </header>
 
-          <div className="flex flex-1 flex-col gap-6">
+          <div className="flex flex-1 flex-col gap-6 p-4 lg:p-8">
             <Outlet />
           </div>
         </div>

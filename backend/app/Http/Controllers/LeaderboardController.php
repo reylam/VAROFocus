@@ -149,4 +149,123 @@ class LeaderboardController extends Controller
 
         return response()->json($leaderboards);
     }
+
+    public function getGlobalLeaderboard(Request $request)
+    {
+        return $this->getLeaderboardEntriesByType('global', $request);
+    }
+
+    public function getWeeklyLeaderboard(Request $request)
+    {
+        return $this->getLeaderboardEntriesByType('weekly', $request);
+    }
+
+    public function getMonthlyLeaderboard(Request $request)
+    {
+        return $this->getLeaderboardEntriesByType('monthly', $request);
+    }
+
+    public function getByMetric($metric, Request $request)
+    {
+        $limit = $request->get('limit', 20);
+        $leaderboard = Leaderboard::where('category', $metric)
+            ->active()
+            ->first();
+
+        if (!$leaderboard) {
+            return response()->json([
+                'message' => 'Leaderboard not found',
+            ], 404);
+        }
+
+        $entries = $leaderboard->entries()
+            ->with('user:id,username,avatar_url,level,xp')
+            ->orderBy('rank')
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'leaderboard' => $leaderboard,
+            'entries' => $entries,
+        ]);
+    }
+
+    public function getUserRank(Request $request)
+    {
+        $user = $request->user();
+        $type = $request->get('type', 'global');
+        $category = $request->get('category', 'xp');
+
+        $leaderboard = Leaderboard::where('type', $type)
+            ->where('category', $category)
+            ->active()
+            ->first();
+
+        if (!$leaderboard) {
+            return response()->json([
+                'message' => 'Leaderboard not found',
+            ], 404);
+        }
+
+        $rank = $leaderboard->getUserRank($user->id);
+        if ($rank === null) {
+            return response()->json([
+                'message' => 'User not ranked yet',
+            ], 404);
+        }
+
+        return response()->json([
+            'rank' => $rank,
+            'leaderboard' => $leaderboard,
+        ]);
+    }
+
+    public function getTop10(Request $request)
+    {
+        $type = $request->get('type', 'global');
+        $category = $request->get('category', 'xp');
+
+        $leaderboard = Leaderboard::where('type', $type)
+            ->where('category', $category)
+            ->active()
+            ->first();
+
+        if (!$leaderboard) {
+            return response()->json([
+                'message' => 'Leaderboard not found',
+            ], 404);
+        }
+
+        $entries = $leaderboard->getTopEntries(10);
+
+        return response()->json($entries);
+    }
+
+    private function getLeaderboardEntriesByType(string $type, Request $request)
+    {
+        $limit = $request->get('limit', 20);
+        $category = $request->get('category', 'xp');
+
+        $leaderboard = Leaderboard::where('type', $type)
+            ->where('category', $category)
+            ->active()
+            ->first();
+
+        if (!$leaderboard) {
+            return response()->json([
+                'message' => 'Leaderboard not found',
+            ], 404);
+        }
+
+        $entries = $leaderboard->entries()
+            ->with('user:id,username,avatar_url,level,xp')
+            ->orderBy('rank')
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'leaderboard' => $leaderboard,
+            'entries' => $entries,
+        ]);
+    }
 }

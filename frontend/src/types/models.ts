@@ -1,7 +1,7 @@
 // User & Auth
 export interface User {
   id: string;
-  name: string;
+  name?: string;
   username: string;
   email: string;
   avatar_url: string | null;
@@ -19,6 +19,8 @@ export interface User {
   created_at: string;
   updated_at: string;
 }
+
+export type AuthUser = User;
 
 export interface UserStats {
   level: number;
@@ -173,9 +175,11 @@ export interface CreateSubTaskPayload {
 // Achievement & Badge
 export interface Achievement {
   id: string;
+  title?: string;
   name: string;
   description: string;
   icon: string | null;
+  icon_url?: string | null;
   condition_type: 'task_count' | 'streak' | 'level' | 'xp' | 'pomodoro_count';
   condition_value: number;
   xp_reward: number;
@@ -190,6 +194,8 @@ export interface Badge {
   icon: string | null;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
+
+export type BadgeRarity = Badge['rarity'];
 
 // Pomodoro
 export interface PomodoroSession {
@@ -284,6 +290,19 @@ export interface TaskCheer {
 }
 
 // Study Room
+export interface RoomMember {
+  user_id: string;
+  role: 'owner' | 'moderator' | 'member';
+  joined_at: string;
+  user: User;
+}
+
+export interface StudyRoomStats {
+  member_count: number;
+  is_full: boolean;
+  active_session: boolean;
+}
+
 export interface StudyRoom {
   id: string;
   name: string;
@@ -291,11 +310,13 @@ export interface StudyRoom {
   description: string | null;
   is_private: boolean;
   max_members: number;
+  members_count?: number;
+  active_session?: boolean;
   created_at: string;
   updated_at: string;
 
   owner?: User;
-  members?: User[];
+  members?: RoomMember[];
   sessions?: RoomSession[];
 }
 
@@ -422,6 +443,15 @@ export interface ActivityLog {
 }
 
 export type Notification = ActivityLog;
+export type ActivityLogEntry = ActivityLog;
+
+export interface Toast {
+  id: string;
+  title: string;
+  description?: string;
+  variant?: 'success' | 'warning' | 'error' | 'info';
+  duration?: number;
+}
 
 // Friends
 export interface Friend {
@@ -445,6 +475,54 @@ export interface FriendRequest {
 
   sender?: User;
   receiver?: User;
+}
+
+export interface FriendStats {
+  total_tasks?: number;
+  completed_tasks?: number;
+  level?: number;
+  xp?: number;
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  obtained_at: string;
+  badge?: Badge;
+}
+
+export interface UserAchievement {
+  id: string;
+  user_id: string;
+  achievement_id: string;
+  unlocked_at: string;
+  achievement?: Achievement;
+}
+
+export interface XpLog {
+  id: string;
+  user_id: string;
+  amount: number;
+  source: string;
+  reference_id: string | null;
+  created_at: string;
+}
+
+export interface ChallengeParticipant {
+  id: string;
+  challenge_id: string;
+  user_id: string;
+  progress: number;
+  completed_at: string | null;
+  joined_at: string;
+  user?: User;
+}
+
+export interface LeaderboardStats {
+  total_entries?: number;
+  user_rank?: number;
+  top_score?: number;
 }
 
 // Pagination

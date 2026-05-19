@@ -38,9 +38,11 @@ const useGamificationStore = create<GamificationState>((set) => ({
       userBadges: [
         ...state.userBadges,
         {
+          id: crypto.randomUUID(),
+          user_id: '',
           badge_id: badge.id,
           badge,
-          unlocked_at: new Date().toISOString(),
+          obtained_at: new Date().toISOString(),
         },
       ],
     })),

@@ -198,13 +198,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [StudyRoomController::class, 'show']);
         Route::put('/{id}', [StudyRoomController::class, 'update']);
         Route::delete('/{id}', [StudyRoomController::class, 'destroy']);
-        Route::post('/{id}/join', [StudyRoomController::class, 'joinRoom']);
-        Route::post('/{id}/leave', [StudyRoomController::class, 'leaveRoom']);
-        Route::post('/{id}/invite', [StudyRoomController::class, 'inviteUser']);
-        Route::post('/{id}/remove-member', [StudyRoomController::class, 'removeMember']);
-        Route::post('/{id}/set-role', [StudyRoomController::class, 'setMemberRole']);
+        Route::post('/{id}/join', [StudyRoomController::class, 'join']);
+        Route::post('/{id}/leave', [StudyRoomController::class, 'leave']);
+        Route::post('/{id}/start-session', [StudyRoomController::class, 'startSession']);
+        Route::post('/{id}/end-session', [StudyRoomController::class, 'endSession']);
         Route::get('/{id}/members', [StudyRoomController::class, 'getMembers']);
-        Route::get('/{id}/sessions', [StudyRoomController::class, 'getRoomSessions']);
     });
 
     Route::prefix('room-sessions')->group(function () {

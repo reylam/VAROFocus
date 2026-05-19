@@ -8,7 +8,7 @@ import useAuthStore from './store/authStore'
 
 const queryClient = new QueryClient()
 
-function Root() {
+export function Root() {
   const checkAuth = useAuthStore((state) => state.checkAuth)
 
   useEffect(() => {

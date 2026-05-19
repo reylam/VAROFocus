@@ -5,18 +5,21 @@ interface TaskState {
   tasks: Task[]
   selectedTask: Task | null
   isLoading: boolean
+  attackingTaskId: string | null
   setTasks: (tasks: Task[]) => void
   addTask: (task: Task) => void
   updateTask: (id: string, updates: Partial<Task>) => void
   removeTask: (id: string) => void
   selectTask: (task: Task | null) => void
   setIsLoading: (loading: boolean) => void
+  setAttacking: (id: string | null) => void
 }
 
 const useTaskStore = create<TaskState>((set) => ({
   tasks: [],
   selectedTask: null,
   isLoading: false,
+  attackingTaskId: null,
   setTasks: (tasks) => set({ tasks }),
   addTask: (task) =>
     set((state) => ({
@@ -39,6 +42,7 @@ const useTaskStore = create<TaskState>((set) => ({
     })),
   selectTask: (task) => set({ selectedTask: task }),
   setIsLoading: (loading) => set({ isLoading: loading }),
+  setAttacking: (id) => set({ attackingTaskId: id }),
 }))
 
 export default useTaskStore

@@ -1,35 +1,23 @@
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useMemo } from 'react'
+import { motion } from 'framer-motion'
+import { useQueryClient } from '@tanstack/react-query'
+import { Users, Plus, Search, Clock, Zap } from 'lucide-react'
 import {
-  Users,
-  Crown,
-  Shield,
-  User,
-  Play,
-  Plus,
-  Search,
-  Clock,
-  MessageCircle,
-  Zap,
-  Wifi,
-  WifiOff
-} from 'lucide-react'
-import {
-  fetchStudyRooms,
-  fetchRecommendedRooms,
-  fetchUserRooms,
-  joinRoom,
-  createRoom,
-  startRoomSession,
-  updateMemberStatus
-} from '../../services/studyRooms'
-import type { StudyRoom, RoomMember, RoomMemberStatus } from '../../types'
+  useStudyRooms,
+  useRecommendedStudyRooms,
+  useUserStudyRooms,
+  useStudyRoom,
+  useCreateStudyRoom,
+  useJoinStudyRoom,
+  useLeaveStudyRoom,
+  useStartStudyRoomSession,
+  useEndStudyRoomSession
+} from '../../hooks/useStudyRoomHooks'
+import type { StudyRoom } from '@/types/models'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Modal } from '../../components/ui/Modal'
-import { HPBar } from '../../components/ui/HPBar'
 import useAuthStore from '../../store/authStore'
 import useUiStore from '../../store/uiStore'
 import clsx from '../../utils/clsx'
@@ -37,51 +25,54 @@ import clsx from '../../utils/clsx'
 interface StudyRoomCardProps {
   room: StudyRoom
   onJoin: (roomId: string) => void
-  onViewDetails: (room: StudyRoom) => void
+  onViewDetails: (roomId: string) => void
 }
 
 function StudyRoomCard({ room, onJoin, onViewDetails }: StudyRoomCardProps) {
   const user = useAuthStore((state) => state.user)
-  const isMember = room.members.some(member => member.user_id === user?.id)
+  const isMember = room.members?.some((member) => member.user_id === user?.id) ?? false
 
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className="group cursor-pointer rounded-2xl border border-white/10 bg-slate-950/80 p-6 shadow-soft backdrop-blur-xl transition-all hover:border-primary/30"
-      onClick={() => onViewDetails(room)}
+      className="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-teal-300"
+      onClick={() => onViewDetails(room.id)}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-white">{room.name}</h3>
-            {room.is_public && (
-              <div className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">
-                Public
-              </div>
-            )}
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-lg font-semibold text-slate-900">{room.name}</h3>
+            <span
+              className={clsx(
+                'rounded-full px-2 py-1 text-xs font-semibold',
+                room.is_private ? 'bg-orange-100 text-orange-700' : 'bg-teal-100 text-teal-700'
+              )}
+            >
+              {room.is_private ? 'Private' : 'Public'}
+            </span>
           </div>
-          <p className="mt-2 text-sm text-slate-400 line-clamp-2">{room.description}</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600 line-clamp-2">{room.description}</p>
 
-          <div className="mt-4 flex items-center gap-4 text-sm text-slate-500">
-            <div className="flex items-center gap-1">
-              <Users size={16} />
-              {room.members_count}/{room.capacity}
+          <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+              <Users size={16} className="text-slate-400" />
+              <span>{room.members_count ?? room.members?.length ?? 0}/{room.max_members}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock size={16} />
-              {new Date(room.created_at).toLocaleDateString()}
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-slate-400" />
+              <span>{new Date(room.created_at).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col items-end gap-2">
           {room.active_session && (
-            <div className="flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs text-primary">
+            <div className="flex items-center gap-1 rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700">
               <Zap size={12} />
-              Active Session
+              Active session
             </div>
           )}
-          {!isMember && (
+          {!isMember ? (
             <Button
               size="sm"
               onClick={(e) => {
@@ -89,13 +80,10 @@ function StudyRoomCard({ room, onJoin, onViewDetails }: StudyRoomCardProps) {
                 onJoin(room.id)
               }}
             >
-              Join Room
+              Join
             </Button>
-          )}
-          {isMember && (
-            <div className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-300">
-              Member
-            </div>
+          ) : (
+            <div className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">Member</div>
           )}
         </div>
       </div>
@@ -103,266 +91,160 @@ function StudyRoomCard({ room, onJoin, onViewDetails }: StudyRoomCardProps) {
   )
 }
 
-interface MemberAvatarProps {
-  member: RoomMember
-  size?: 'sm' | 'md' | 'lg'
-  showStatus?: boolean
-}
-
-function MemberAvatar({ member, size = 'md', showStatus = true }: MemberAvatarProps) {
-  const sizeClasses = {
-    sm: 'h-8 w-8',
-    md: 'h-12 w-12',
-    lg: 'h-16 w-16'
-  }
-
-  const statusColors = {
-    idle: 'bg-slate-500',
-    ready: 'bg-emerald-500',
-    focusing: 'bg-primary'
-  }
-
-  const roleIcons = {
-    owner: Crown,
-    moderator: Shield,
-    member: User
-  }
-
-  const RoleIcon = roleIcons[member.role]
-
-  return (
-    <div className="relative">
-      <div className={clsx(
-        'relative overflow-hidden rounded-full border-2 border-white/10',
-        sizeClasses[size]
-      )}>
-        {member.user.avatar_url ? (
-          <img
-            src={member.user.avatar_url}
-            alt={member.user.name}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary to-accent text-white">
-            {member.user.name.charAt(0).toUpperCase()}
-          </div>
-        )}
-
-        {showStatus && (
-          <div className={clsx(
-            'absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-slate-950',
-            statusColors[member.status]
-          )} />
-        )}
-      </div>
-
-      <div className="absolute -top-1 -right-1 rounded-full bg-slate-950 p-1">
-        <RoleIcon size={12} className="text-slate-400" />
-      </div>
-    </div>
-  )
-}
-
 interface RoomLobbyProps {
   room: StudyRoom
+  stats: {
+    member_count: number
+    is_full: boolean
+    active_session: boolean
+  }
   onClose: () => void
 }
 
-function RoomLobby({ room, onClose }: RoomLobbyProps) {
+function RoomLobby({ room, stats, onClose }: RoomLobbyProps) {
   const user = useAuthStore((state) => state.user)
   const addToast = useUiStore((state) => state.addToast)
   const queryClient = useQueryClient()
 
-  const [sessionTime, setSessionTime] = useState(0)
-  const [isConnected] = useState(true)
-
   const isOwner = room.owner_id === user?.id
-  const currentMember = room.members.find(m => m.user_id === user?.id)
+  const currentMember = room.members?.find((member) => member.user_id === user?.id)
+  const sessionActive = stats.active_session || room.active_session
+  const memberCount = stats.member_count ?? room.members?.length ?? 0
 
-  const updateStatusMutation = useMutation({
-    mutationFn: (status: RoomMemberStatus) => updateMemberStatus(room.id, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study-room', room.id] })
+  const leaveRoom = useLeaveStudyRoom()
+  const startSession = useStartStudyRoomSession()
+  const endSession = useEndStudyRoomSession()
+
+  const handleLeave = () => {
+    if (!room.id) return
+
+    leaveRoom.mutate(room.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['studyRooms'] })
+        queryClient.invalidateQueries({ queryKey: ['studyRoom', room.id] })
         addToast({
-          title: 'Status updated',
-          description: 'Your status has been updated for the room.',
+          title: 'Left study room',
+          description: 'You are no longer a room member.',
+          variant: 'warning'
+        })
+        onClose()
+      },
+      onError: () => {
+        addToast({
+          title: 'Unable to leave',
+          description: 'Please try again later.',
+          variant: 'error'
+        })
+      }
+    })
+  }
+
+  const handleStartSession = () => {
+    startSession.mutate(room.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['studyRoom', room.id] })
+        addToast({
+          title: 'Session started',
+          description: 'Your room session is live.',
           variant: 'success'
         })
       },
       onError: () => {
         addToast({
-          title: 'Failed to update status',
-          description: 'Please try again.',
-          variant: 'warning'
+          title: 'Unable to start session',
+          description: 'Try again in a moment.',
+          variant: 'error'
         })
       }
-    }
-  )
-
-  const startSessionMutation = useMutation({
-    mutationFn: () => startRoomSession(room.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study-room', room.id] })
-        addToast({
-          title: 'Session started!',
-          description: 'The focus session has begun.',
-          variant: 'success'
-        })
-      }
-    }
-  )
-
-  // Simulate real-time updates (in real app, use WebSocket/Pusher)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (room.active_session) {
-        setSessionTime(prev => prev + 1)
-      }
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [room.active_session])
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+    })
   }
 
-  const readyMembers = room.members.filter(m => m.status === 'ready').length
+  const handleEndSession = () => {
+    endSession.mutate(room.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['studyRoom', room.id] })
+        addToast({
+          title: 'Session ended',
+          description: 'Focus session has been stopped.',
+          variant: 'success'
+        })
+      },
+      onError: () => {
+        addToast({
+          title: 'Unable to stop session',
+          description: 'Try again in a moment.',
+          variant: 'error'
+        })
+      }
+    })
+  }
 
   return (
     <Modal isOpen={true} onClose={onClose} title={room.name} size="lg">
       <div className="space-y-6">
-        {/* Room Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-slate-400">{room.description}</p>
-            <div className="mt-2 flex items-center gap-4 text-sm text-slate-500">
-              <div className="flex items-center gap-1">
-                <Users size={16} />
-                {room.members_count}/{room.capacity} members
-              </div>
-              <div className="flex items-center gap-1">
-                {isConnected ? <Wifi size={16} /> : <WifiOff size={16} />}
-                {isConnected ? 'Connected' : 'Disconnected'}
-              </div>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-3">
+            <p className="text-sm text-slate-500">{room.description}</p>
+            <div className="flex flex-wrap gap-3 text-sm text-slate-600">
+              <span className="rounded-xl bg-slate-100 px-3 py-2">Owner: {room.owner?.name ?? 'Unknown'}</span>
+              <span className="rounded-xl bg-slate-100 px-3 py-2">Members: {memberCount}/{room.max_members}</span>
+              <span className="rounded-xl bg-slate-100 px-3 py-2">Created: {new Date(room.created_at).toLocaleDateString()}</span>
             </div>
           </div>
 
-          {room.active_session && (
-            <div className="text-center">
-              <div className="text-2xl font-mono font-bold text-primary">
-                {formatTime(sessionTime)}
-              </div>
-              <p className="text-xs text-slate-400">Session Time</p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div
+              className={clsx(
+                'rounded-2xl px-4 py-3 text-sm font-semibold',
+                sessionActive ? 'bg-orange-100 text-orange-800' : 'bg-teal-100 text-teal-800'
+              )}
+            >
+              {sessionActive ? 'Active session' : 'No session live'}
             </div>
-          )}
+            {isOwner && (
+              <Button
+                onClick={sessionActive ? handleEndSession : handleStartSession}
+                disabled={startSession.isPending || endSession.isPending}
+              >
+                {sessionActive ? 'End Session' : 'Start Session'}
+              </Button>
+            )}
+            {currentMember && (
+              <Button variant="ghost" onClick={handleLeave} disabled={leaveRoom.isPending}>
+                Leave room
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Session Controls */}
-        {isOwner && !room.active_session && (
-          <Card className="border-primary/30 bg-primary/5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-white">Ready to start?</h3>
-                <p className="text-sm text-slate-400">
-                  {readyMembers} of {room.members_count} members are ready
-                </p>
-              </div>
-              <Button
-                onClick={() => startSessionMutation.mutate()}
-                disabled={readyMembers === 0}
-                className="gap-2"
-              >
-                <Play size={16} />
-                Start Session
-              </Button>
-            </div>
-
-            <div className="mt-4">
-              <HPBar
-                current={readyMembers}
-                max={room.members_count}
-                label="Ready Progress"
-              />
-            </div>
-          </Card>
-        )}
-
-        {/* Member Status Controls */}
-        {currentMember && (
-          <Card>
-            <h3 className="font-semibold text-white">Your Status</h3>
-            <div className="mt-3 flex gap-2">
-              {(['idle', 'ready', 'focusing'] as RoomMemberStatus[]).map((status) => (
-                <Button
-                  key={status}
-                  variant={currentMember.status === status ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => updateStatusMutation.mutate(status)}
-                  disabled={updateStatusMutation.isPending}
-                >
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </Button>
-              ))}
-            </div>
-          </Card>
-        )}
-
-        {/* Members Grid */}
         <Card>
-          <h3 className="font-semibold text-white">Room Members</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence>
-              {room.members.map((member) => (
-                <motion.div
-                  key={member.user_id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="flex items-center gap-3 rounded-lg border border-white/10 bg-slate-950/50 p-3"
-                >
-                  <MemberAvatar member={member} size="md" />
-                  <div className="flex-1">
-                    <p className="font-semibold text-white">{member.user.name}</p>
-                    <p className="text-xs text-slate-400 capitalize">{member.status}</p>
-                  </div>
-                  {member.is_ready && (
-                    <div className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">
-                      Ready
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-900">Members</h3>
+            <span className="text-sm text-slate-500">{memberCount} joined</span>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {room.members?.map((member) => (
+              <div key={member.user_id} className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 text-slate-700">
+                  {(member.user.name ?? member.user.username).charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">{member.user.name ?? member.user.username}</p>
+                  <p className="text-sm text-slate-500">{member.role}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </Card>
 
-        {/* Activity Feed */}
         <Card>
-          <h3 className="flex items-center gap-2 font-semibold text-white">
-            <MessageCircle size={18} />
-            Activity Feed
-          </h3>
-          <div className="mt-4 space-y-3">
-            <div className="rounded-lg border border-white/10 bg-slate-950/50 p-3">
-              <p className="text-sm text-slate-300">
-                <span className="font-semibold text-primary">Alex</span> joined the room
-              </p>
-              <p className="text-xs text-slate-500">2 minutes ago</p>
+          <h3 className="text-lg font-semibold text-slate-900">Activity</h3>
+          <div className="mt-4 space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl bg-slate-100 p-4">
+              <p>Room created. Ready to start studying.</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-slate-950/50 p-3">
-              <p className="text-sm text-slate-300">
-                <span className="font-semibold text-emerald-400">Sarah</span> is now ready
-              </p>
-              <p className="text-xs text-slate-500">1 minute ago</p>
-            </div>
-            <div className="rounded-lg border border-white/10 bg-slate-950/50 p-3">
-              <p className="text-sm text-slate-300">
-                Session started by room owner
-              </p>
-              <p className="text-xs text-slate-500">30 seconds ago</p>
+            <div className="rounded-2xl bg-slate-100 p-4">
+              <p>Members can join and stay focused together.</p>
             </div>
           </div>
         </Card>
@@ -374,81 +256,94 @@ function RoomLobby({ room, onClose }: RoomLobbyProps) {
 export function StudyRoomsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [selectedRoom, setSelectedRoom] = useState<StudyRoom | null>(null)
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'all' | 'recommended' | 'my-rooms'>('all')
 
   const addToast = useUiStore((state) => state.addToast)
   const queryClient = useQueryClient()
 
-  const { data: allRooms = [], isPending: loadingAll } = useQuery({
-    queryKey: ['study-rooms'],
-    queryFn: fetchStudyRooms,
-    enabled: activeTab === 'all'
-  })
+  const { data: allRooms = [], isFetching: loadingAll } = useStudyRooms({ limit: 20 })
+  const { data: recommendedRooms = [], isFetching: loadingRecommended } = useRecommendedStudyRooms()
+  const { data: userRooms = [], isFetching: loadingUser } = useUserStudyRooms()
+  const studyRoomQuery = useStudyRoom(selectedRoomId ?? '')
 
-  const { data: recommendedRooms = [], isPending: loadingRecommended } = useQuery({
-    queryKey: ['study-rooms-recommended'],
-    queryFn: fetchRecommendedRooms,
-    enabled: activeTab === 'recommended'
-  })
+  const createRoomMutation = useCreateStudyRoom()
+  const joinRoomMutation = useJoinStudyRoom()
 
-  const { data: userRooms = [], isPending: loadingUser } = useQuery({
-    queryKey: ['study-rooms-user'],
-    queryFn: fetchUserRooms,
-    enabled: activeTab === 'my-rooms'
-  })
+  const selectedRoom = studyRoomQuery.data?.room
+  const roomStats = studyRoomQuery.data?.stats
 
-  const joinRoomMutation = useMutation({
-    mutationFn: joinRoom,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study-rooms'] })
-      addToast({
-        title: 'Joined room successfully!',
-        description: 'Welcome to the study room.',
-        variant: 'success'
-      })
-    },
-    onError: () => {
-      addToast({
-        title: 'Failed to join room',
-        description: 'Please try again.',
-        variant: 'warning'
-      })
-    }
-  })
+  const rooms = useMemo(() => {
+    const source = activeTab === 'recommended' ? recommendedRooms : activeTab === 'my-rooms' ? userRooms : allRooms
+    return source.filter((room) =>
+      room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (room.description ?? '').toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [activeTab, allRooms, recommendedRooms, userRooms, searchQuery])
 
-  const createRoomMutation = useMutation({
-    mutationFn: createRoom,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study-rooms'] })
-      setShowCreateModal(false)
-      addToast({
-        title: 'Room created!',
-        description: 'Your study room is ready.',
-        variant: 'success'
-      })
-    }
-  })
+  const isLoading = activeTab === 'all' ? loadingAll : activeTab === 'recommended' ? loadingRecommended : loadingUser
 
-  const currentRooms = activeTab === 'all' ? allRooms :
-                      activeTab === 'recommended' ? recommendedRooms :
-                      userRooms
+  const handleCreate = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
 
-  const isLoading = loadingAll || loadingRecommended || loadingUser
+    createRoomMutation.mutate(
+      {
+        name: formData.get('name') as string,
+        description: formData.get('description') as string,
+        max_members: parseInt(formData.get('max_members') as string, 10) || 10,
+        is_private: formData.get('is_private') === 'on'
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['studyRooms'] })
+          setShowCreateModal(false)
+          addToast({
+            title: 'Room created!',
+            description: 'Your study room is ready.',
+            variant: 'success'
+          })
+        },
+        onError: () => {
+          addToast({
+            title: 'Could not create room',
+            description: 'Please try again.',
+            variant: 'error'
+          })
+        }
+      }
+    )
+  }
 
-  const filteredRooms = currentRooms.filter(room =>
-    room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    room.description.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const handleJoinRoom = (roomId: string) => {
+    joinRoomMutation.mutate(roomId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['studyRooms'] })
+        queryClient.invalidateQueries({ queryKey: ['studyRoom', roomId] })
+        addToast({
+          title: 'Joined room',
+          description: 'You can now participate in the room.',
+          variant: 'success'
+        })
+      },
+      onError: () => {
+        addToast({
+          title: 'Unable to join room',
+          description: 'Please try again.',
+          variant: 'error'
+        })
+      }
+    })
+  }
 
   return (
     <main className="space-y-8 pb-12">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Study rooms</p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Join a live room</h1>
-          <p className="mt-2 text-sm text-slate-500">
-            Real-time focus lobbies with status and owner controls. Study together, stay accountable.
+          <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Study rooms</p>
+          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Join a live room</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Real-time rooms and collaboration for focused study sessions.
           </p>
         </div>
         <Button variant="primary" size="lg" onClick={() => setShowCreateModal(true)}>
@@ -457,7 +352,6 @@ export function StudyRoomsPage() {
         </Button>
       </header>
 
-      {/* Search and Tabs */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 max-w-md">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -469,7 +363,7 @@ export function StudyRoomsPage() {
           />
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[
             { key: 'all', label: 'All Rooms' },
             { key: 'recommended', label: 'Recommended' },
@@ -479,7 +373,7 @@ export function StudyRoomsPage() {
               key={tab.key}
               variant={activeTab === tab.key ? 'primary' : 'ghost'}
               size="sm"
-              onClick={() => setActiveTab(tab.key as any)}
+              onClick={() => setActiveTab(tab.key as 'all' | 'recommended' | 'my-rooms')}
             >
               {tab.label}
             </Button>
@@ -487,101 +381,51 @@ export function StudyRoomsPage() {
         </div>
       </div>
 
-      {/* Rooms Grid */}
       <div className="grid gap-4 xl:grid-cols-2">
         {isLoading ? (
-          <div className="col-span-full rounded-2xl border border-white/10 bg-slate-950/80 p-12 text-center">
-            <div className="text-slate-400">Loading rooms...</div>
+          <div className="col-span-full rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <div className="text-slate-500">Loading rooms...</div>
           </div>
-        ) : filteredRooms.length === 0 ? (
-          <div className="col-span-full rounded-2xl border border-white/10 bg-slate-950/80 p-12 text-center">
-            <div className="text-slate-400">
-              {searchQuery ? 'No rooms match your search.' : 'No rooms available right now.'}
+        ) : rooms.length === 0 ? (
+          <div className="col-span-full rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <div className="text-slate-500">
+              {searchQuery ? 'No rooms match your search.' : 'No rooms found.'}
             </div>
           </div>
         ) : (
-          filteredRooms.map((room) => (
+          rooms.map((room) => (
             <StudyRoomCard
               key={room.id}
               room={room}
-              onJoin={(roomId) => joinRoomMutation.mutate(roomId)}
-              onViewDetails={setSelectedRoom}
+              onJoin={handleJoinRoom}
+              onViewDetails={setSelectedRoomId}
             />
           ))
         )}
       </div>
 
-      {/* Create Room Modal */}
-      <Modal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        title="Create Study Room"
-      >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            const formData = new FormData(e.currentTarget)
-            createRoomMutation.mutate({
-              name: formData.get('name') as string,
-              description: formData.get('description') as string,
-              capacity: parseInt(formData.get('capacity') as string) || 10,
-              is_public: formData.get('is_public') === 'on'
-            })
-          }}
-          className="space-y-4"
-        >
-          <Input
-            name="name"
-            label="Room Name"
-            placeholder="e.g., Morning Focus Squad"
-            required
-          />
-          <Input
-            name="description"
-            label="Description"
-            placeholder="Describe your room's focus and goals"
-            required
-          />
-          <Input
-            name="capacity"
-            label="Capacity"
-            type="number"
-            placeholder="10"
-            min="2"
-            max="50"
-          />
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Create Study Room">
+        <form onSubmit={handleCreate} className="space-y-4">
+          <Input name="name" label="Room Name" placeholder="e.g., Morning Focus Squad" required />
+          <Input name="description" label="Description" placeholder="Describe your room" required />
+          <Input name="max_members" label="Max Members" type="number" placeholder="10" min="2" max="50" />
           <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="is_public"
-              id="is_public"
-              className="rounded border-slate-700 bg-slate-950"
-            />
-            <label htmlFor="is_public" className="text-sm text-slate-300">
-              Make room public
-            </label>
+            <input type="checkbox" name="is_private" id="is_private" className="rounded border-slate-300 text-teal-700" />
+            <label htmlFor="is_private" className="text-sm text-slate-600">Keep room private</label>
           </div>
           <div className="flex gap-3 pt-4">
             <Button type="submit" className="flex-1" disabled={createRoomMutation.isPending}>
               Create Room
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setShowCreateModal(false)}
-            >
+            <Button type="button" variant="ghost" onClick={() => setShowCreateModal(false)}>
               Cancel
             </Button>
           </div>
         </form>
       </Modal>
 
-      {/* Room Lobby Modal */}
-      {selectedRoom && (
-        <RoomLobby
-          room={selectedRoom}
-          onClose={() => setSelectedRoom(null)}
-        />
+      {selectedRoom && roomStats && (
+        <RoomLobby room={selectedRoom} stats={roomStats} onClose={() => setSelectedRoomId(null)} />
       )}
     </main>
   )

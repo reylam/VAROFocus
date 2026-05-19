@@ -24,8 +24,8 @@ export async function fetchRoomDetails(id: string) {
 export async function createRoom(room: {
   name: string
   description: string
-  capacity: number
-  is_public: boolean
+  max_members: number
+  is_private: boolean
 }) {
   const { data } = await api.post<StudyRoom>('/study-rooms', room)
   return data

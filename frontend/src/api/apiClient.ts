@@ -1,41 +1,34 @@
-import axios from 'axios';
-import type { AxiosInstance, AxiosError } from 'axios';
-import { useAuthStore } from '@/store/authStore';
+import axios from 'axios'
+import type { AxiosError, AxiosInstance } from 'axios'
+import { useAuthStore } from '@/store/authStore'
 
-const API_BASE_URL = 'http://localhost:8000/api';
+export const API_BASE_URL = 'http://localhost:8000/api'
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-});
+})
 
-// Request interceptor - Add auth token
 apiClient.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
+  const token = useAuthStore.getState().token || localStorage.getItem('auth_token')
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`
   }
-  return config;
-});
+  return config
+})
 
-// Response interceptor - Handle 401 and token refresh
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config;
-    if (!originalRequest) return Promise.reject(error);
-
+  (error: AxiosError) => {
     if (error.response?.status === 401) {
-      const { logout } = useAuthStore.getState();
-      logout();
-      window.location.href = '/login';
+      useAuthStore.getState().logout()
     }
+    return Promise.reject(error)
+  },
+)
 
-    return Promise.reject(error);
-  }
-);
-
-export default apiClient;
+export default apiClient

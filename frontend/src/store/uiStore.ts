@@ -1,63 +1,41 @@
-import { create } from 'zustand';
-import type { Toast } from '../types';
+import { create } from 'zustand'
 
-interface UIState {
-  theme: 'light' | 'dark';
-  sidebarOpen: boolean;
-  modals: Record<string, boolean>;
-  toasts: Toast[];
+export type ToastVariant = 'success' | 'warning' | 'error' | 'info'
 
-  toggleTheme: () => void;
-  toggleSidebar: () => void;
-  setSidebarOpen: (open: boolean) => void;
-  openModal: (id: string) => void;
-  closeModal: (id: string) => void;
-  addToast: (toast: Omit<Toast, 'id'>) => void;
-  removeToast: (id: string) => void;
+export interface Toast {
+  id: string
+  title: string
+  description?: string
+  variant?: ToastVariant
+  duration?: number
 }
 
-export const useUIStore = create<UIState>((set) => ({
-  theme: 'dark',
+interface UiState {
+  theme: 'light'
+  sidebarOpen: boolean
+  toasts: Toast[]
+  toggleTheme: () => void
+  setSidebarOpen: (open: boolean) => void
+  addToast: (toast: Omit<Toast, 'id'>) => void
+  removeToast: (id: string) => void
+}
+
+export const useUiStore = create<UiState>((set) => ({
+  theme: 'light',
   sidebarOpen: true,
-  modals: {},
   toasts: [],
-
-  toggleTheme: () =>
-    set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
-
-  toggleSidebar: () =>
-    set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-
-  setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
-
-  openModal: (id: string) =>
-    set((state) => ({ modals: { ...state.modals, [id]: true } })),
-
-  closeModal: (id: string) =>
-    set((state) => ({ modals: { ...state.modals, [id]: false } })),
-
-  addToast: (toast: Omit<Toast, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    set((state) => ({
-      toasts: [
-        ...state.toasts,
-        { ...toast, id },
-      ],
-    }));
-
+  toggleTheme: () => set({ theme: 'light' }),
+  setSidebarOpen: (open) => set({ sidebarOpen: open }),
+  addToast: (toast) => {
+    const id = crypto.randomUUID()
+    set((state) => ({ toasts: [...state.toasts, { id, ...toast }] }))
     if (toast.duration !== -1) {
-      setTimeout(() => {
-        set((state) => ({
-          toasts: state.toasts.filter((n) => n.id !== id),
-        }));
-      }, toast.duration || 3000);
+      window.setTimeout(() => {
+        set((state) => ({ toasts: state.toasts.filter((item) => item.id !== id) }))
+      }, toast.duration ?? 3200)
     }
   },
+  removeToast: (id) => set((state) => ({ toasts: state.toasts.filter((item) => item.id !== id) })),
+}))
 
-  removeToast: (id: string) =>
-    set((state) => ({
-      toasts: state.toasts.filter((n) => n.id !== id),
-    })),
-}));
-
-export default useUIStore;
+export default useUiStore

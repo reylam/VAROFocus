@@ -5,43 +5,48 @@ import { XPBar } from '../../components/shared/XPBar'
 import { TaskCard } from '../../components/shared/TaskCard'
 import { Button } from '../../components/ui/Button'
 import { useTasks } from '../../hooks/useTaskHooks'
+import { useRecentActivity } from '../../hooks/useActivityHooks'
+import { useLeaderboardEntries } from '../../hooks/useLeaderboardHooks'
 
 export function DashboardPage() {
   const user = useAuthStore((state) => state.user)
   const { data: tasksResponse } = useTasks()
+  const { data: recentActivity } = useRecentActivity(4)
+  const { data: leaderboardEntries } = useLeaderboardEntries('Global', 5)
   const tasks = tasksResponse?.data ?? []
-  const username = user?.username || 'Champion'
+  const username = user?.username || user?.name || 'Champion'
+  const streakCount = user?.streak_count ?? user?.streak ?? 0
 
   return (
-    <main className="space-y-8 pb-12">
-      <section className="grid gap-6 xl:grid-cols-[1.5fr 1fr]">
-        <Card className="bg-[radial-gradient(circle_at_top_left,rgba(79,70,229,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(251,191,36,0.18),transparent_36%),bg-slate-950/95] border-white/10">
+    <main className="space-y-8 pb-12 text-slate-900">
+      <section className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+        <Card className="bg-gradient-to-br from-[#eaf8f4] via-white to-[#fff7e7] border-slate-200">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Warrior profile</p>
-              <h1 className="mt-3 text-4xl font-semibold text-white">Welcome back, {username}</h1>
-              <p className="mt-3 max-w-2xl text-slate-300">Your focus guild is ready. Attack monsters, claim rewards, and keep the streak alive.</p>
+              <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Warrior profile</p>
+              <h1 className="mt-3 text-4xl font-semibold text-slate-900">Welcome back, {username}</h1>
+              <p className="mt-3 max-w-2xl text-slate-700">Your focus guild is ready. Attack monsters, claim rewards, and keep the streak alive.</p>
             </div>
-            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/90 p-5 text-center shadow-soft">
-              <div className="flex items-center justify-center gap-3 text-slate-300">
-                <Flame />
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 text-center shadow-sm">
+              <div className="flex items-center justify-center gap-3 text-slate-600">
+                <Flame className="h-5 w-5 text-[#17937f]" />
                 <span>Current streak</span>
               </div>
-              <p className="mt-4 text-5xl font-semibold text-white">{user?.streak || 0}🔥</p>
-              <p className="mt-2 text-sm text-slate-400">Consecutive focus sessions</p>
+              <p className="mt-4 text-5xl font-semibold text-slate-900">{streakCount}</p>
+              <p className="mt-2 text-sm text-slate-500">Consecutive focus sessions</p>
             </div>
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-[1.5rem] bg-slate-950/90 p-5">
-              <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Level</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{user?.level || 1}</p>
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+              <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Level</p>
+              <p className="mt-3 text-3xl font-semibold text-slate-900">{user?.level || 1}</p>
               <XPBar current={user?.xp || 0} nextLevel={user?.next_level_xp || 1200} />
             </div>
-            <div className="rounded-[1.5rem] bg-gradient-to-br from-primary to-accent p-5 text-white shadow-glow">
+            <div className="rounded-[1.5rem] border border-[#f99f1e] bg-[#fff5e0] p-5 text-slate-900 shadow-sm">
               <p className="text-sm uppercase tracking-[0.32em]">Daily reward</p>
-              <p className="mt-3 text-3xl font-semibold">Claim today&apos;s bonus</p>
-              <p className="mt-3 text-sm text-slate-100/80">Level progress resets with a strong session, not an early stop.</p>
+              <p className="mt-3 text-3xl font-semibold">{user?.title ?? 'Focus seeker'}</p>
+              <p className="mt-3 text-sm text-slate-700">Next reward unlocks as you keep your streak for {streakCount + 1} sessions.</p>
               <Button className="mt-5 w-full" size="lg">Claim reward</Button>
             </div>
           </div>
@@ -51,41 +56,50 @@ export function DashboardPage() {
           <Card className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Leaderboard pulse</p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">Top 5</h2>
+                <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Leaderboard pulse</p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-900">Top 5</h2>
               </div>
               <Button variant="ghost" size="sm">View all</Button>
             </div>
             <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map((rank) => (
-                <div key={rank} className="flex items-center justify-between rounded-3xl border border-white/10 bg-slate-950/70 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-xs text-slate-300">{rank}</div>
-                    <div>
-                      <p className="text-sm font-semibold text-white">Player {rank}</p>
-                      <p className="text-xs text-slate-500">Score {Math.max(4200 - rank * 200, 1200)}</p>
+              {!leaderboardEntries?.length ? (
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Loading leaderboard...</div>
+              ) : (
+                leaderboardEntries.map((entry) => (
+                  <div key={entry.id} className="flex items-center justify-between rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-xs text-slate-700">{entry.rank}</div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">{entry.user?.username ?? `Player ${entry.rank}`}</p>
+                        <p className="text-xs text-slate-500">Score {entry.score}</p>
+                      </div>
                     </div>
+                    <span className="text-sm font-semibold text-[#f99f1e]">+{entry.score}</span>
                   </div>
-                  <span className="text-sm text-slate-300">+{50 - rank * 2}</span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </Card>
 
-          <Card className="bg-slate-950/90">
+          <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Activity</p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">Recent progress</h2>
+                <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Activity</p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-900">Recent progress</h2>
               </div>
-              <ArrowRight className="text-slate-400" />
+              <ArrowRight className="text-slate-500" />
             </div>
             <div className="mt-5 space-y-4">
-              {['Defeated a boss task', 'Finished a Pomodoro session', 'Unlocked a badge'].map((item) => (
-                <div key={item} className="rounded-3xl border border-white/10 bg-slate-950/80 p-4 text-sm text-slate-300">
-                  {item}
-                </div>
-              ))}
+              {!recentActivity?.length ? (
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">No activity recorded yet.</div>
+              ) : (
+                recentActivity.map((item) => (
+                  <div key={item.id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
+                    <p className="font-medium text-slate-900">{item.message}</p>
+                    <p className="mt-1 text-xs text-slate-500">{new Date(item.created_at).toLocaleString()}</p>
+                  </div>
+                ))
+              )}
             </div>
           </Card>
         </div>
@@ -94,8 +108,8 @@ export function DashboardPage() {
       <section className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm uppercase tracking-[0.32em] text-slate-400">Active monsters</p>
-            <h2 className="mt-2 text-3xl font-semibold text-white">Task battlefield</h2>
+            <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Active monsters</p>
+            <h2 className="mt-2 text-3xl font-semibold text-slate-900">Task battlefield</h2>
           </div>
           <Button variant="secondary">Add task</Button>
         </div>
@@ -106,7 +120,7 @@ export function DashboardPage() {
               <TaskCard key={task.id} task={task} onAttack={() => undefined} />
             ))
           ) : (
-            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-8 text-slate-400">No active tasks</div>
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-8 text-slate-500">No active tasks</div>
           )}
         </div>
       </section>

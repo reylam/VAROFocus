@@ -19,7 +19,7 @@ export function Input({
   return (
     <div className="w-full space-y-2">
       {label && (
-        <label className="block text-sm font-semibold text-slate-200">
+        <label className="block text-sm font-semibold text-slate-700">
           {label}
         </label>
       )}
@@ -31,7 +31,7 @@ export function Input({
         )}
         <input
           className={clsx(
-            'w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-white placeholder-slate-500 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
+            'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition focus:border-[#17937f] focus:outline-none focus:ring-2 focus:ring-[#17937f]/20',
             icon ? 'pl-12' : '',
             error ? 'border-red-500/50 focus:ring-red-500/20' : '',
             className,
@@ -40,10 +40,10 @@ export function Input({
         />
       </div>
       {error && (
-        <p className="text-sm text-red-400">{error}</p>
+        <p className="text-sm text-red-500">{error}</p>
       )}
       {helperText && !error && (
-        <p className="text-sm text-slate-400">{helperText}</p>
+        <p className="text-sm text-slate-500">{helperText}</p>
       )}
     </div>
   )

@@ -14,7 +14,10 @@ export const useActivityLogs = (limit = 20) =>
 export const useRecentActivity = (limit = 10) =>
   useQuery<ActivityLog[]>({
     queryKey: ['recentActivity', limit],
-    queryFn: () => activityAPI.recent(limit),
+    queryFn: async () => {
+      const response = await activityAPI.recent(limit)
+      return response.data
+    },
   })
 
 export const useTodayActivity = () =>
