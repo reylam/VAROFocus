@@ -2,6 +2,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { tasksAPI } from '@/api/tasks';
 import type { CreateTaskPayload, TaskFilters, UpdateTaskPayload } from '@/types/models';
 
+// useTaskHooks.ts
+export const useCreateTask = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateTaskPayload) => tasksAPI.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+};
+
 export const useTasks = (filters?: TaskFilters) =>
   useQuery({
     queryKey: ['tasks', filters],
@@ -19,16 +30,6 @@ export const useTask = (id: string) =>
       return response.data.task;
     },
   });
-
-export const useCreateTask = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: CreateTaskPayload) => tasksAPI.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-    },
-  });
-};
 
 export const useUpdateTask = (id: string) => {
   const queryClient = useQueryClient();
@@ -61,6 +62,8 @@ export const useCompleteTask = (id: string) => {
     },
   });
 };
+
+
 
 export const useAttackMonster = () => {
   const queryClient = useQueryClient();

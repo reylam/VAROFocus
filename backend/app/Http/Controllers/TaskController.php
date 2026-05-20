@@ -9,6 +9,7 @@ use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Validator;
+
 class TaskController extends Controller
 {
     public function index(Request $request)
@@ -40,58 +41,78 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        $validation = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id',
-            'difficulty' => 'in:easy,medium,hard,boss|default:medium',
-            'due_date' => 'nullable|date_format:Y-m-d H:i:s',
-            'estimated_minutes' => 'nullable|integer|min:1',
-            'priority' => 'integer|between:0,5|default:0',
-            'is_public' => 'boolean|default:false',
-        ]);
-        if ($validation->fails()) {
+            $validation = Validator::make($request->all(), [
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'category_id' => 'nullable|exists:categories,id',
+                'difficulty' => 'in:easy,medium,hard,boss',
+                'due_date' => 'nullable|date',
+                'estimated_minutes' => 'nullable|integer|min:1',
+                'priority' => 'integer|between:0,5',
+                'is_public' => 'boolean',
+            ]);
+
+            if ($validation->fails()) {
+                return response()->json([
+                    'message' => 'Invalid field',
+                    'errors' => $validation->errors(),
+                ], 422);
+            }
+
+            $validated = $validation->validated();
+
+            // Set HP and XP based on difficulty
+            $difficultyMap = [
+                'easy' => ['hp' => 50, 'xp' => 25],
+                'medium' => ['hp' => 100, 'xp' => 50],
+                'hard' => ['hp' => 200, 'xp' => 100],
+                'boss' => ['hp' => 500, 'xp' => 250],
+            ];
+
+            $difficulty = $validated['difficulty'] ?? 'medium';
+            $stats = $difficultyMap[$difficulty];
+
+            $taskData = [
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'category_id' => $validated['category_id'] ?? null,
+                'difficulty' => $difficulty,
+                'hp' => $stats['hp'],
+                'current_hp' => $stats['hp'],
+                'xp_reward' => $stats['xp'],
+                'due_date' => $validated['due_date'] ?? null,
+                'estimated_minutes' => $validated['estimated_minutes'] ?? null,
+                'priority' => $validated['priority'] ?? 1,
+                'is_public' => $validated['is_public'] ?? false,
+                'status' => 'pending',
+            ];
+
+            $task = $user->tasks()->create($taskData);
+
+            // Create associated monster
+            $monsterTypes = ['slime', 'goblin', 'orc', 'dragon', 'phantom', 'skeleton'];
+            $task->monster()->create([
+                'type' => $monsterTypes[array_rand($monsterTypes)],
+                'max_hp' => $stats['hp'],
+                'current_hp' => $stats['hp'],
+            ]);
+
             return response()->json([
-                'message' => 'Invalid field',
-                'errors' => $validation->errors(),
-            ], 422);
+                'message' => 'Task created successfully',
+                'task' => $task->load(['category', 'monster']),
+            ], 201);
+        } catch (\Exception $e) {
+            \Log::error('Task creation error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
+            return response()->json([
+                'message' => 'Failed to create task',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        $validated = $validation->validated();
-
-        // Set HP and XP based on difficulty
-        $difficultyMap = [
-            'easy' => ['hp' => 50, 'xp' => 25],
-            'medium' => ['hp' => 100, 'xp' => 50],
-            'hard' => ['hp' => 200, 'xp' => 100],
-            'boss' => ['hp' => 500, 'xp' => 250],
-        ];
-
-        $difficulty = $validated['difficulty'] ?? 'medium';
-        $stats = $difficultyMap[$difficulty];
-
-        $task = $user->tasks()->create([
-            ...$validated,
-            'hp' => $stats['hp'],
-            'current_hp' => $stats['hp'],
-            'xp_reward' => $stats['xp'],
-            'status' => 'pending',
-        ]);
-
-        // Create associated monster
-        $monsterTypes = ['slime', 'goblin', 'orc', 'dragon', 'phantom', 'skeleton'];
-        Monster::create([
-            'task_id' => $task->id,
-            'type' => $monsterTypes[array_rand($monsterTypes)],
-            'max_hp' => $stats['hp'],
-            'current_hp' => $stats['hp'],
-        ]);
-
-        return response()->json([
-            'message' => 'Task created successfully',
-            'task' => $task->load(['category', 'monster']),
-        ], 201);
     }
 
     public function show($id, Request $request)
