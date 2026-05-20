@@ -231,7 +231,9 @@ export function DashboardPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-slate-900">Friends</h2>
                   <Button variant="ghost" size="sm">
-                    See More <ArrowRight className="h-4 w-4 ml-1" />
+                    <Link to={"/dashboard/friends"} className='flex'>
+                      See More <ArrowRight className="h-4 w-4 ml-1" />
+                    </Link>
                   </Button>
                 </div>
                 <div className="space-y-2">

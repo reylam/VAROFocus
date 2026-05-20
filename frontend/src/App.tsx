@@ -9,6 +9,7 @@ import { LeaderboardPage } from './features/leaderboard/LeaderboardPage'
 import { AchievementsPage } from './features/achievements/AchievementsPage'
 import { StudyRoomsPage } from './features/studyRooms/StudyRoomsPage'
 import { ProtectedRoute } from './pages/ProtectedRoute'
+import { FriendsPage } from './features/friends/FriendsPage'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         }
       >
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/friends" element={<FriendsPage />} />
         <Route path="/tasks" element={<TasksPage />} />
         <Route path="/pomodoro" element={<PomodoroPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
