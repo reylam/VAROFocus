@@ -11,9 +11,8 @@ import { Link } from 'react-router-dom'
 // Component Notification
 const Notification = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
   return (
-    <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg animate-in slide-in-from-top-2 ${
-      type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
-    }`}>
+    <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg animate-in slide-in-from-top-2 ${type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
+      }`}>
       {type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
       <p className="text-sm font-medium">{message}</p>
       <button onClick={onClose} className="ml-2 text-gray-400 hover:text-gray-600">
@@ -28,7 +27,7 @@ const SimpleCalendar = () => {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
   const currentDate = new Date().getDate()
-  
+
   return (
     <div>
       <div className="grid grid-cols-7 gap-1 text-center mb-3">
@@ -38,8 +37,8 @@ const SimpleCalendar = () => {
       </div>
       <div className="grid grid-cols-7 gap-1 text-center">
         {dates.slice(0, 35).map((date, idx) => (
-          <div 
-            key={idx} 
+          <div
+            key={idx}
             className={`text-xs py-1.5 rounded-full cursor-pointer transition ${date === currentDate ? 'bg-[#17937f] text-white' : 'text-slate-700 hover:bg-slate-100'}`}
           >
             {date}
@@ -61,7 +60,7 @@ const TodoItem = ({ title, isCompleted = false }: { title: string; isCompleted?:
 // Monster Card Component
 const MonsterCardComponent = ({ title, hp, currentHp, xpReward, difficulty = 'MEDIUM' }: { title: string; hp: number; currentHp: number; xpReward: number; difficulty?: string }) => {
   const percentage = (currentHp / hp) * 100
-  
+
   return (
     <div className="bg-slate-50 rounded-xl p-4">
       <div className="flex items-center justify-between mb-2">
@@ -123,10 +122,10 @@ export function DashboardPage() {
   const { data: recentActivity } = useRecentActivity(6)
   const { data: leaderboardEntries } = useLeaderboardEntries('Global', 5)
   const createTask = useCreateTask()
-  
+
   const tasks = tasksResponse?.data ?? []
   const username = user?.username || user?.name || 'Varoooo'
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [formData, setFormData] = useState({
@@ -166,12 +165,12 @@ export function DashboardPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.title.trim()) {
       showNotification('Please fill in all required fields', 'error')
       return
     }
-    
+
     try {
       await createTask.mutateAsync({
         title: formData.title,
@@ -216,30 +215,82 @@ export function DashboardPage() {
     <div className="min-h-screen bg-[#f6fbfa]">
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
 
-      <main className="pl-64 p-8">
+      <main className='pt-8'>
         {/* Hello User */}
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <h1 className="text-2xl font-semibold text-slate-900">Hello, {username}!</h1>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-12 gap-6">
           {/* Left Column - Quest / To Do */}
           <div className="col-span-8 space-y-6">
-            {/* Quest Section */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium">QUEST</p>
-                  <h2 className="text-xl font-semibold text-slate-900">To do</h2>
+
+            <div className='flex gap-6'>
+              {/* Friends */}
+              <Card className="p-6 flex-1">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-900">Friends</h2>
+                  <Button variant="ghost" size="sm">
+                    See More <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
                 </div>
-                <Button variant="ghost" size="sm" onClick={handleOpenModal}>
-                  <Plus className="h-4 w-4 mr-1" /> Add Task
-                </Button>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {todoItems.map((item, idx) => (
-                  <TodoItem key={idx} title={item} />
-                ))}
+                <div className="space-y-2">
+                  {friends.map((friend, idx) => (
+                    <FriendCard key={idx} username={friend.username} level={friend.level} />
+                  ))}
+                </div>
+              </Card>
+
+              {/* Study Rooms */}
+              <Card className="p-6 flex-1">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-900">Study Rooms</h2>
+                  <Button variant="ghost" size="sm">
+                    See More <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {studyRooms.map((room, idx) => (
+                    <StudyRoomCard key={idx} name={room.name} members={room.members} />
+                  ))}
+                </div>
+              </Card>
+            </div>
+
+            {/* Calendar */}
+            <Card className='flex'>
+              {/* My Schedule / Calendar */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-900">My Schedule</h2>
+                  <Button variant="ghost" size="sm">
+                    See More <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+                <SimpleCalendar />
+              </Card>
+
+              {/* ScheduleCard Deadline */}
+              <div className='flex flex-col flex-1 p-5 gap-6'>
+                {/* Items */}
+                <div className='flex items-center w-full gap-6 border border-slate-200 rounded-full py-2'>
+                  <div className="w-14 scale-125 h-14 rounded-full bg-gradient-to-br from-[#17937f] to-[#0f6658] flex items-center justify-center text-white font-semibold text-sm">
+                    1
+                  </div>
+                  <div className="flex flex-col">
+                    <p>Lorem ipsum dolor sit amet.</p>
+                    <p className='text-slate-500 text-sm'>Lorem, ipsum.</p>
+                  </div>
+                </div>
+                <div className='flex items-center w-full gap-6 border border-slate-200 rounded-full py-2'>
+                  <div className="w-14 scale-125 h-14 rounded-full bg-gradient-to-br from-[#17937f] to-[#0f6658] flex items-center justify-center text-white font-semibold text-sm">
+                    1
+                  </div>
+                  <div className="flex flex-col">
+                    <p>Lorem ipsum dolor sit amet.</p>
+                    <p className='text-slate-500 text-sm'>Lorem, ipsum.</p>
+                  </div>
+                </div>
               </div>
             </Card>
 
@@ -257,7 +308,7 @@ export function DashboardPage() {
               <div className="grid grid-cols-2 gap-4">
                 {tasks && tasks.length > 0 ? (
                   tasks.slice(0, 4).map((task) => (
-                    <MonsterCardComponent 
+                    <MonsterCardComponent
                       key={task.id}
                       title={task.title}
                       hp={task.hp}
@@ -276,7 +327,7 @@ export function DashboardPage() {
             </Card>
 
             {/* Pomodoro Quick Section */}
-            <Card className="p-6">
+            {/* <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-xs uppercase tracking-wide text-slate-500 font-medium">QUICK FOCUS</p>
@@ -296,41 +347,11 @@ export function DashboardPage() {
                 </div>
                 <Button className="bg-[#17937f] hover:bg-[#0f6658]">Start</Button>
               </div>
-            </Card>
+            </Card> */}
           </div>
 
           {/* Right Column - Friends, Study Rooms, Activity, Schedule */}
           <div className="col-span-4 space-y-6">
-            {/* Friends */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-900">Friends</h2>
-                <Button variant="ghost" size="sm">
-                  See More <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {friends.map((friend, idx) => (
-                  <FriendCard key={idx} username={friend.username} level={friend.level} />
-                ))}
-              </div>
-            </Card>
-
-            {/* Study Rooms */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-900">Study Rooms</h2>
-                <Button variant="ghost" size="sm">
-                  See More <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {studyRooms.map((room, idx) => (
-                  <StudyRoomCard key={idx} name={room.name} members={room.members} />
-                ))}
-              </div>
-            </Card>
-
             {/* Activity Feed */}
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -344,26 +365,71 @@ export function DashboardPage() {
                   <ActivityItem message="Complete your first task to see activity!" time="Just now" />
                 ) : (
                   recentActivity.slice(0, 5).map((item) => (
-                    <ActivityItem 
-                      key={item.id} 
-                      message={item.message} 
-                      time={new Date(item.created_at).toLocaleString()} 
+                    <ActivityItem
+                      key={item.id}
+                      message={item.message}
+                      time={new Date(item.created_at).toLocaleString()}
                     />
                   ))
                 )}
               </div>
             </Card>
 
-            {/* My Schedule / Calendar */}
+            {/* Quest Section */}
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-900">My Schedule</h2>
-                <Button variant="ghost" size="sm">
-                  See More <ArrowRight className="h-4 w-4 ml-1" />
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium">QUEST</p>
+                  <h2 className="text-xl font-semibold text-slate-900">To do</h2>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleOpenModal}>
+                  <Plus className="h-4 w-4 mr-1" /> Add Task
                 </Button>
               </div>
-              <SimpleCalendar />
+              <div className="flex justify-between">
+                <div className="divide-y divide-slate-100">
+                  {todoItems.map((item, idx) => (
+                    <TodoItem key={idx} title={item} />
+                  ))}
+                </div>
+                <div className='flex flex-col items-center gap-4'>
+                  <p>Monster Name</p>
+                  <div className="w-20 h-20 rounded-full bg-[#17937f] flex items-center justify-center">
+                    <Clock className="h-8 w-8 text-white" />
+                  </div>
+                  <div className="w-full h-2 bg-slate-200 rounded-full mb-3">
+                    <div className="h-full bg-red-500 rounded-full transition-all w-1/2" />
+                  </div>
+                </div>
+              </div>
             </Card>
+
+
+            {/* Pomodoro Quick Section */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium">QUICK FOCUS</p>
+                  {/* <h2 className="text-xl font-semibold text-slate-900">Pomodoro Quick</h2> */}
+                </div>
+              </div>
+              <div className="flex justify-center items-center gap-4 p-4 rounded-xl">
+                <Card className='flex flex-col items-center gap-2 font-semibold'>
+                  <h2>Pomodoro</h2>
+                  <Link to={"/pomodoro"} className="w-16 h-16 rounded-full bg-[#17937f] flex items-center justify-center">
+                    <Clock className="h-8 w-8 text-white" />
+                  </Link>
+                </Card>
+                <Card className='flex flex-col items-center gap-2 font-semibold'>
+                  <h2>Leaderboard</h2>
+                  <Link to={"/leaderboard"} className="w-16 h-16 rounded-full bg-[#17937f] flex items-center justify-center">
+                    <Trophy className="h-8 w-8 text-white" />
+                  </Link>
+                </Card>
+              </div>
+            </Card>
+
+
           </div>
         </div>
       </main>

@@ -23,7 +23,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
+    <aside className="sticky  left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
       {/* Logo Section */}
       <div className="flex items-center gap-2 px-6 py-6 border-b border-slate-100">
         <img src={varoLogo} alt="VAROFocus" className="h-8 w-8" />
