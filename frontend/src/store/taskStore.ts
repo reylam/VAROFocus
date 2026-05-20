@@ -13,6 +13,7 @@ interface TaskState {
   selectTask: (task: Task | null) => void
   setIsLoading: (loading: boolean) => void
   setAttacking: (id: string | null) => void
+  
 }
 
 const useTaskStore = create<TaskState>((set) => ({
