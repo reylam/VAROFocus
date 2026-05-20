@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import useUiStore from '@/store/uiStore'
+import logo from "@/assets/varo_logo_text.png"
 
 // Component Toast/Notification
 const ToastContainer = () => {
@@ -152,64 +153,68 @@ export function LoginPage() {
   return (
     <>
       <ToastContainer />
-      <main className="grid min-h-screen place-items-center bg-[#f6fbfa] px-4 py-10 text-slate-900">
-        <Card className="w-full max-w-md border-slate-200 bg-white p-8 shadow-xl">
-          <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#17937f]">VAROFocus</p>
-            <h1 className="mt-3 text-3xl font-semibold">Welcome back</h1>
-            <p className="mt-2 text-sm text-slate-600">Masuk untuk lanjut menyerang task monster dan tracking XP.</p>
-          </div>
+      <div className="min-h-screen bg-[#f6fbfa] flex flex-col items-center justify-center px-4 py-10">
+        <div className="flex flex-col items-center w-full max-w-md">
+          <img src={logo} alt="VAROFocus" className="w-32 mb-6" />
           
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <Input 
-                icon={<Mail size={18} />} 
-                label="Email" 
-                type="email" 
-                value={email} 
-                onChange={(event) => {
-                  setEmail(event.target.value)
-                  if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
-                }} 
-                required 
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-              )}
+          <Card className="w-full border-slate-200 bg-white p-8 shadow-xl">
+            <div className="mb-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#17937f]">VAROFocus</p>
+              <h1 className="mt-3 text-3xl font-semibold">Welcome back</h1>
+              <p className="mt-2 text-sm text-slate-600">Masuk untuk lanjut menyerang task monster dan tracking XP.</p>
             </div>
             
-            <div>
-              <Input 
-                icon={<Lock size={18} />} 
-                label="Password" 
-                type="password" 
-                value={password} 
-                onChange={(event) => {
-                  setPassword(event.target.value)
-                  if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
-                }} 
-                required 
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-              )}
-            </div>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <Input 
+                  icon={<Mail size={18} />} 
+                  label="Email" 
+                  type="email" 
+                  value={email} 
+                  onChange={(event) => {
+                    setEmail(event.target.value)
+                    if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
+                  }} 
+                  required 
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
+              </div>
+              
+              <div>
+                <Input 
+                  icon={<Lock size={18} />} 
+                  label="Password" 
+                  type="password" 
+                  value={password} 
+                  onChange={(event) => {
+                    setPassword(event.target.value)
+                    if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
+                  }} 
+                  required 
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                )}
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full" 
+                size="lg" 
+                disabled={login.isPending}
+              >
+                {login.isPending ? 'Signing in...' : 'Sign in'}
+              </Button>
+            </form>
             
-            <Button 
-              type="submit" 
-              className="w-full" 
-              size="lg" 
-              disabled={login.isPending}
-            >
-              {login.isPending ? 'Signing in...' : 'Sign in'}
-            </Button>
-          </form>
-          
-          <p className="mt-6 text-center text-sm text-slate-600">
-            Belum punya akun? <Link className="font-semibold text-[#17937f]" to="/register">Register</Link>
-          </p>
-        </Card>
-      </main>
+            <p className="mt-6 text-center text-sm text-slate-600">
+              Belum punya akun? <Link className="font-semibold text-[#17937f]" to="/register">Register</Link>
+            </p>
+          </Card>
+        </div>
+      </div>
     </>
   )
 }

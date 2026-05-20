@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import useUiStore from '@/store/uiStore'
+import logo from "../../assets/varo_logo_text.png"
 
-// Toast Container Component (bisa dipisah ke file terpisah)
+// Toast Container Component
 const ToastContainer = () => {
   const toasts = useUiStore((state) => state.toasts)
   const removeToast = useUiStore((state) => state.removeToast)
@@ -129,11 +130,9 @@ export function RegisterPage() {
       const responseData = error.response?.data
       
       if (status === 422) {
-        // Validation error dari Laravel
         const validationErrors = responseData?.errors
         
         if (validationErrors) {
-          // Set field errors
           if (validationErrors.username) {
             setErrors(prev => ({ ...prev, username: validationErrors.username[0] }))
           }
@@ -147,7 +146,6 @@ export function RegisterPage() {
             setErrors(prev => ({ ...prev, password_confirmation: validationErrors.password_confirmation[0] }))
           }
           
-          // Show first error as toast
           const firstError = Object.values(validationErrors)[0]?.[0]
           addToast({ 
             title: 'Registration Failed', 
@@ -162,7 +160,6 @@ export function RegisterPage() {
           })
         }
       } else if (status === 409) {
-        // Conflict - email or username already exists
         addToast({ 
           title: 'Registration Failed', 
           description: responseData?.message || 'Email or username already exists', 
@@ -187,105 +184,109 @@ export function RegisterPage() {
   return (
     <>
       <ToastContainer />
-      <main className="grid min-h-screen place-items-center bg-[#f6fbfa] px-4 py-10 text-slate-900">
-        <Card className="w-full max-w-md border-slate-200 bg-white p-8 shadow-xl">
-          <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#f99f1e]">New account</p>
-            <h1 className="mt-3 text-3xl font-semibold">Create your profile</h1>
-            <p className="mt-2 text-sm text-slate-600">Akun baru langsung dapat token Bearer dari Laravel Sanctum.</p>
-          </div>
+      <div className="min-h-screen bg-[#f6fbfa] flex flex-col items-center justify-center px-4 py-10">
+        <div className="flex flex-col items-center w-full max-w-md">
+          <img src={logo} alt="VAROFocus" className="w-32 mb-6" />
           
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Username Field */}
-            <div>
-              <Input 
-                icon={<UserRound size={18} />} 
-                label="Username" 
-                value={username} 
-                onChange={(event) => {
-                  setUsername(event.target.value)
-                  if (errors.username) setErrors(prev => ({ ...prev, username: undefined }))
-                }} 
-                required 
-                minLength={3}
-              />
-              {errors.username && (
-                <p className="mt-1 text-sm text-red-500">{errors.username}</p>
-              )}
-              <p className="mt-1 text-xs text-slate-500">Min. 3 characters</p>
+          <Card className="w-full border-slate-200 bg-white p-8 shadow-xl">
+            <div className="mb-8 text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#f99f1e]">New account</p>
+              <h1 className="mt-3 text-3xl font-semibold">Create your profile</h1>
+              <p className="mt-2 text-sm text-slate-600">Akun baru langsung dapat token Bearer dari Laravel Sanctum.</p>
             </div>
+            
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              {/* Username Field */}
+              <div>
+                <Input 
+                  icon={<UserRound size={18} />} 
+                  label="Username" 
+                  value={username} 
+                  onChange={(event) => {
+                    setUsername(event.target.value)
+                    if (errors.username) setErrors(prev => ({ ...prev, username: undefined }))
+                  }} 
+                  required 
+                  minLength={3}
+                />
+                {errors.username && (
+                  <p className="mt-1 text-sm text-red-500">{errors.username}</p>
+                )}
+                <p className="mt-1 text-xs text-slate-500">Min. 3 characters</p>
+              </div>
 
-            {/* Email Field */}
-            <div>
-              <Input 
-                icon={<Mail size={18} />} 
-                label="Email" 
-                type="email" 
-                value={email} 
-                onChange={(event) => {
-                  setEmail(event.target.value)
-                  if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
-                }} 
-                required 
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-              )}
-            </div>
+              {/* Email Field */}
+              <div>
+                <Input 
+                  icon={<Mail size={18} />} 
+                  label="Email" 
+                  type="email" 
+                  value={email} 
+                  onChange={(event) => {
+                    setEmail(event.target.value)
+                    if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
+                  }} 
+                  required 
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
+              </div>
 
-            {/* Password Field */}
-            <div>
-              <Input 
-                icon={<Lock size={18} />} 
-                label="Password" 
-                type="password" 
-                value={password} 
-                onChange={(event) => {
-                  setPassword(event.target.value)
-                  if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
-                }} 
-                required 
-                minLength={8}
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-              )}
-              <p className="mt-1 text-xs text-slate-500">Min. 8 characters</p>
-            </div>
+              {/* Password Field */}
+              <div>
+                <Input 
+                  icon={<Lock size={18} />} 
+                  label="Password" 
+                  type="password" 
+                  value={password} 
+                  onChange={(event) => {
+                    setPassword(event.target.value)
+                    if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
+                  }} 
+                  required 
+                  minLength={8}
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                )}
+                <p className="mt-1 text-xs text-slate-500">Min. 8 characters</p>
+              </div>
 
-            {/* Confirm Password Field */}
-            <div>
-              <Input 
-                icon={<Lock size={18} />} 
-                label="Confirm password" 
-                type="password" 
-                value={passwordConfirmation} 
-                onChange={(event) => {
-                  setPasswordConfirmation(event.target.value)
-                  if (errors.password_confirmation) setErrors(prev => ({ ...prev, password_confirmation: undefined }))
-                }} 
-                required 
-              />
-              {errors.password_confirmation && (
-                <p className="mt-1 text-sm text-red-500">{errors.password_confirmation}</p>
-              )}
-            </div>
+              {/* Confirm Password Field */}
+              <div>
+                <Input 
+                  icon={<Lock size={18} />} 
+                  label="Confirm password" 
+                  type="password" 
+                  value={passwordConfirmation} 
+                  onChange={(event) => {
+                    setPasswordConfirmation(event.target.value)
+                    if (errors.password_confirmation) setErrors(prev => ({ ...prev, password_confirmation: undefined }))
+                  }} 
+                  required 
+                />
+                {errors.password_confirmation && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password_confirmation}</p>
+                )}
+              </div>
 
-            <Button 
-              type="submit" 
-              className="w-full" 
-              size="lg" 
-              disabled={register.isPending}
-            >
-              {register.isPending ? 'Creating...' : 'Create account'}
-            </Button>
-          </form>
-          
-          <p className="mt-6 text-center text-sm text-slate-600">
-            Sudah punya akun? <Link className="font-semibold text-[#17937f]" to="/login">Sign in</Link>
-          </p>
-        </Card>
-      </main>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                size="lg" 
+                disabled={register.isPending}
+              >
+                {register.isPending ? 'Creating...' : 'Create account'}
+              </Button>
+            </form>
+            
+            <p className="mt-6 text-center text-sm text-slate-600">
+              Sudah punya akun? <Link className="font-semibold text-[#17937f]" to="/login">Sign in</Link>
+            </p>
+          </Card>
+        </div>
+      </div>
     </>
   )
 }
