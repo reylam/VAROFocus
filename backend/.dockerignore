@@ -1,0 +1,12 @@
+# Keep the image clean and never bake local secrets/DB into it.
+.git
+vendor
+node_modules
+.env
+.env.*
+database/database.sqlite
+database/*.sqlite*
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
