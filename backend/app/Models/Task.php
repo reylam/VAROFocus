@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Task extends Model
@@ -75,9 +76,9 @@ class Task extends Model
             ->withTimestamps();
     }
 
-    public function monster(): HasMany
+    public function monster(): HasOne
     {
-        return $this->hasMany(Monster::class);
+        return $this->hasOne(Monster::class);
     }
 
     public function schedules(): HasMany

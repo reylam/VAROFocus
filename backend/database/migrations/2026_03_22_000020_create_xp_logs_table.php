@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('source');
             $table->uuid('reference_id')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

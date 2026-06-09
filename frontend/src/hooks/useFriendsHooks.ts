@@ -1,12 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { friendsAPI } from '@/api/friends'
+import type { Friend } from '@/types/models'
 
 export const useFriends = () =>
-  useQuery({
+  useQuery<Friend[]>({
     queryKey: ['friends'],
     queryFn: async () => {
       const response = await friendsAPI.getFriends()
-      return response.data
+      // Backend returns a Laravel paginator ({ data: [...] }); normalize to a plain array
+      const payload = response.data as Friend[] | { data?: Friend[] }
+      return Array.isArray(payload) ? payload : payload?.data ?? []
     },
   })
 

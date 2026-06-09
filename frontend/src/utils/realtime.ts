@@ -16,6 +16,8 @@ export async function initRealtime(options?: { key?: string; cluster?: string })
     const [{ default: Pusher }, { default: Echo }] = await Promise.all([
       // dynamic import to avoid bundling if not used
       import('pusher-js'),
+      // laravel-echo is an optional peer dep; only present when realtime is enabled
+      // @ts-expect-error optional dependency, not installed by default
       import('laravel-echo'),
     ])
 

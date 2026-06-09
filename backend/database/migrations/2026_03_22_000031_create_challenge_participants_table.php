@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('joined_at')->useCurrent();
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('challenge_id')->references('id')->on('challenges')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('type')->default('notification');
             $table->boolean('is_sent')->default(false);
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('set null');

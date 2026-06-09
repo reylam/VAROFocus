@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('season_end')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

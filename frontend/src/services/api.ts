@@ -1,11 +1,14 @@
 import axios from 'axios'
+import { API_BASE_URL } from '@/api/apiClient'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  // We authenticate with Bearer tokens, not cookies. Keeping this false avoids
+  // CORS failures against the wildcard-origin backend.
+  withCredentials: false,
 })
 
 api.interceptors.request.use((config) => {

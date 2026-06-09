@@ -1,5 +1,5 @@
-import { ArrowRight, X, CheckCircle, AlertCircle, Target, Clock, Users, Trophy, Calendar, Plus, Shield, Flame, Award, BookOpen, Coffee, Zap, Star, Sword } from 'lucide-react'
-import { useState, useMemo, useEffect } from 'react'
+import { ArrowRight, X, CheckCircle, AlertCircle, Target, Clock, Users, Trophy, Calendar, Plus, Shield, Flame, BookOpen, Coffee, Zap, Star, Sword } from 'lucide-react'
+import { useState, useMemo } from 'react'
 import useAuthStore from '../../store/authStore'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
@@ -261,7 +261,7 @@ export function DashboardPage() {
     )
   }
 
-  const handleCompleteTask = (taskId: string) => {
+  const handleCompleteTask = (_taskId: string) => {
     completeTask.mutate(undefined, {
       onSuccess: () => {
         addToast({ title: 'Task completed!', description: 'Great job!', variant: 'success' })
@@ -277,7 +277,7 @@ export function DashboardPage() {
   const upcomingDeadlines = useMemo(() => {
     return tasks
       .filter(t => t.due_date && t.status !== 'completed')
-      .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+      .sort((a, b) => new Date(a.due_date as string).getTime() - new Date(b.due_date as string).getTime())
       .slice(0, 3)
   }, [tasks])
 
@@ -462,7 +462,7 @@ export function DashboardPage() {
                       </div>
                       <div className="flex flex-col flex-1">
                         <p className="font-medium text-sm">{task.title}</p>
-                        <p className='text-slate-500 text-xs'>{new Date(task.due_date).toLocaleDateString()}</p>
+                        <p className='text-slate-500 text-xs'>{new Date(task.due_date as string).toLocaleDateString()}</p>
                       </div>
                       <div className="w-24">
                         <div className="w-full h-1.5 bg-slate-200 rounded-full">

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('damage');
             $table->string('source')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('monster_id')->references('id')->on('monsters')->onDelete('cascade');

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { ArrowRight, Clock, User2 } from "lucide-react";
+import { Clock, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 

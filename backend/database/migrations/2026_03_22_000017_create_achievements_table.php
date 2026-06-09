@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('xp_reward');
             $table->uuid('badge_id')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('badge_id')->references('id')->on('badges')->onDelete('set null');
         });

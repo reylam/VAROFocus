@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid('badge_id');
             $table->timestamp('obtained_at');
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('badge_id')->references('id')->on('badges')->onDelete('cascade');

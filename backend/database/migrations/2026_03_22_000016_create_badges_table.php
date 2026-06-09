@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->string('rarity')->default('common');
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

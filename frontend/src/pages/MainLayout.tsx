@@ -3,14 +3,11 @@ import { Search, Bell, User, Settings, LogOut } from 'lucide-react'
 import { Sidebar } from '../components/shared/Sidebar'
 import { ToastProvider } from '../components/shared/ToastProvider'
 import useAuthStore from '../store/authStore'
-import useUiStore from '../store/uiStore'
-import { Button } from '../components/ui/Button'
 import { useEffect, useState } from 'react'
 
 export function MainLayout() {
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
-  const setSidebarOpen = useUiStore((state) => state.setSidebarOpen)
   const location = useLocation()
   const [showProfileMenu, setShowProfileMenu] = useState(false)
 

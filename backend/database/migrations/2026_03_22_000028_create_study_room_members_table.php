@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('role')->default('member');
             $table->timestamp('joined_at');
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('room_id')->references('id')->on('study_rooms')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -15,6 +15,9 @@ class PomodoroSession extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    // The pomodoro_sessions table only has a created_at column.
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'user_id',
         'task_id',

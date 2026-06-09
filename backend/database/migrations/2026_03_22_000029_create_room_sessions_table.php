@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamp('started_at');
             $table->timestamp('ended_at')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('room_id')->references('id')->on('study_rooms')->onDelete('cascade');
         });

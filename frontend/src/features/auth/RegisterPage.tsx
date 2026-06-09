@@ -146,7 +146,7 @@ export function RegisterPage() {
             setErrors(prev => ({ ...prev, password_confirmation: validationErrors.password_confirmation[0] }))
           }
           
-          const firstError = Object.values(validationErrors)[0]?.[0]
+          const firstError = (Object.values(validationErrors)[0] as string[] | undefined)?.[0]
           addToast({ 
             title: 'Registration Failed', 
             description: firstError || 'Please check your input', 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->float('probability');
             $table->boolean('is_active')->default(true);
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

@@ -113,7 +113,7 @@ export const useAttackMonster = () => {
       if (context?.previousTasks) queryClient.setQueryData(['tasks'], context.previousTasks)
       if (context?.previousTask) queryClient.setQueryData(['task', variables.id], context.previousTask)
     },
-    onSettled: (data: unknown, error: Error | null, variables: { id: string; damage?: number; source?: 'manual' | 'pomodoro' | 'skill' }) => {
+    onSettled: (_data: unknown, _error: Error | null, variables: { id: string; damage?: number; source?: 'manual' | 'pomodoro' | 'skill' }) => {
       // Re-fetch to reconcile server state
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['task', variables.id] })

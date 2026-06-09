@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Activity, Sparkles, ShieldCheck, Clock3, Trophy, Users2, LogOut, Settings, UserCircle } from 'lucide-react'
+import { Activity, ShieldCheck, Clock3, Trophy, Users2, LogOut, Settings } from 'lucide-react'
 import useAuthStore from '../../store/authStore'
-import { Button } from '../ui/Button'
 import varoLogo from '../../assets/varo_logo.png'
 
 const links = [

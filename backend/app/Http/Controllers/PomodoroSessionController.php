@@ -32,8 +32,8 @@ class PomodoroSessionController extends Controller
 
         $validation = Validator::make($request->all(), [
             'task_id' => 'nullable|exists:tasks,id',
-            'duration_minutes' => 'integer|min:15|max:60|default:25',
-            'break_minutes' => 'integer|min:5|max:30|default:5',
+            'duration_minutes' => 'nullable|integer|min:15|max:60',
+            'break_minutes' => 'nullable|integer|min:5|max:30',
         ]);
         if ($validation->fails()) {
             return response()->json([
