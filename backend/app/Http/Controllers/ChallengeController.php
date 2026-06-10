@@ -40,7 +40,7 @@ class ChallengeController extends Controller
             'target_value' => 'required|integer|min:1',
             'start_date' => 'required|date_format:Y-m-d H:i:s',
             'end_date' => 'required|date_format:Y-m-d H:i:s|after:start_date',
-            'reward_xp' => 'integer|min:0|default:100',
+            'reward_xp' => 'integer|min:0',
             'reward_badge_id' => 'nullable|exists:badges,id',
         ]);
         if ($validation->fails()) {

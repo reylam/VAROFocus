@@ -49,8 +49,8 @@ class StudyRoomController extends Controller
         $validation = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'description' => 'nullable|string',
-            'is_private' => 'boolean|default:false',
-            'max_members' => 'integer|min:2|max:50|default:10',
+            'is_private' => 'boolean',
+            'max_members' => 'integer|min:2|max:50',
         ]);
         if ($validation->fails()) {
             return response()->json([
