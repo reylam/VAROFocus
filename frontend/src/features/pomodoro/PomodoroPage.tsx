@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pause, Play, RotateCcw } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import useUiStore from '../../store/uiStore'
@@ -131,6 +132,31 @@ export function PomodoroPage() {
   const todayMinutes = stats?.total_minutes ?? 0
   const todayXp = stats?.xp_earned ?? 0
 
+  const selectedTask = activeTasks.find((t) => t.id === taskId)
+
+  const mConfig = useMemo(() => {
+    if (selectedTask) {
+      const rawMonster = selectedTask.monster
+      const monsterObj = Array.isArray(rawMonster) ? rawMonster[0] : rawMonster
+      const type = monsterObj?.type || (selectedTask.difficulty === 'boss' ? 'dragon' : selectedTask.difficulty === 'hard' ? 'orc' : selectedTask.difficulty === 'medium' ? 'goblin' : 'slime')
+
+      switch (type) {
+        case 'slime':
+          return { emoji: '🟢', color: 'from-emerald-400 to-teal-500', name: selectedTask.title, hp: selectedTask.current_hp, maxHp: selectedTask.hp }
+        case 'goblin':
+          return { emoji: '👺', color: 'from-amber-400 to-orange-500', name: selectedTask.title, hp: selectedTask.current_hp, maxHp: selectedTask.hp }
+        case 'orc':
+          return { emoji: '👹', color: 'from-red-400 to-rose-600', name: selectedTask.title, hp: selectedTask.current_hp, maxHp: selectedTask.hp }
+        case 'dragon':
+          return { emoji: '🐉', color: 'from-indigo-500 to-purple-700', name: selectedTask.title, hp: selectedTask.current_hp, maxHp: selectedTask.hp }
+        default:
+          return { emoji: '👾', color: 'from-slate-400 to-slate-600', name: selectedTask.title, hp: selectedTask.current_hp, maxHp: selectedTask.hp }
+      }
+    } else {
+      return { emoji: '👾', color: 'from-slate-500 to-slate-700', name: 'Wild Focus Spirit', hp: 100, maxHp: 100 }
+    }
+  }, [selectedTask])
+
   return (
     <main className="space-y-8 pb-12">
       <header>
@@ -179,6 +205,63 @@ export function PomodoroPage() {
               </div>
             </div>
           </div>
+
+          <AnimatePresence>
+            {status !== 'idle' && mConfig && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="flex flex-col items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 w-full max-w-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Battle Session Live</span>
+                </div>
+
+                <div className="flex items-center gap-4 w-full">
+                  <motion.div
+                    animate={
+                      status === 'running'
+                        ? {
+                            y: [0, -12, 0],
+                            scale: [1, 1.08, 1],
+                          }
+                        : {
+                            y: [0, -3, 0],
+                            scale: [1, 1.02, 1],
+                          }
+                    }
+                    transition={{
+                      repeat: Infinity,
+                      duration: status === 'running' ? 0.8 : 2.0,
+                      ease: 'easeInOut',
+                    }}
+                    className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${mConfig.color} shadow-md text-3xl`}
+                  >
+                    {mConfig.emoji}
+                  </motion.div>
+
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-slate-900 text-sm truncate">{mConfig.name}</h4>
+                    <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
+                      <span>Monster HP</span>
+                      <span className="font-medium">{mConfig.hp}/{mConfig.maxHp}</span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-red-500 to-rose-600 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.max(0, Math.min(100, (mConfig.hp / mConfig.maxHp) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Button

@@ -114,14 +114,14 @@ const MonsterCardComponent = ({ id, title, hp, currentHp, xpReward, difficulty =
 }
 
 // Friend Card
-const FriendCard = ({ username, level, avatar }: { username: string; level: number; avatar?: string }) => (
+const FriendCard = ({ username, level, avatar }: { username?: string; level?: number; avatar?: string }) => (
   <div className="flex items-center gap-3 py-2">
     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#17937f] to-[#0f6658] flex items-center justify-center text-white font-semibold text-sm">
-      {avatar ? <img src={avatar} alt={username} className="w-full h-full rounded-full object-cover" /> : username.charAt(0).toUpperCase()}
+      {avatar ? <img src={avatar} alt={username} className="w-full h-full rounded-full object-cover" /> : (username ? username.charAt(0).toUpperCase() : '?')}
     </div>
     <div>
-      <p className="font-medium text-slate-900 text-sm">{username}</p>
-      <p className="text-xs text-slate-500">Level {level}</p>
+      <p className="font-medium text-slate-900 text-sm">{username || 'Unknown Friend'}</p>
+      <p className="text-xs text-slate-500">Level {level ?? 1}</p>
     </div>
   </div>
 )
@@ -360,7 +360,12 @@ export function DashboardPage() {
                     <p className="text-center text-slate-500 py-4">No friends yet</p>
                   ) : (
                     friends.slice(0, 3).map((friend: any) => (
-                      <FriendCard key={friend.id} username={friend.username} level={friend.level} />
+                      <FriendCard 
+                        key={friend.id} 
+                        username={friend.friend?.username || friend.username} 
+                        level={friend.friend?.level || friend.level} 
+                        avatar={friend.friend?.avatar_url || friend.avatar_url}
+                      />
                     ))
                   )}
                 </div>

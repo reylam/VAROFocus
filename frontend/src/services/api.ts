@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_BASE_URL } from '@/api/apiClient'
+import { mockAdapter } from '@/api/mockAdapter'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,6 +10,7 @@ const api = axios.create({
   // We authenticate with Bearer tokens, not cookies. Keeping this false avoids
   // CORS failures against the wildcard-origin backend.
   withCredentials: false,
+  adapter: mockAdapter,
 })
 
 api.interceptors.request.use((config) => {

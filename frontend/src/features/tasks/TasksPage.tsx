@@ -160,19 +160,19 @@ export function TasksPage() {
 
       <AnimatePresence>
         {isCreateOpen && (
-          <>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setCreateOpen(false)}
-              className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"
+              className="absolute inset-0"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 12 }}
-              className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl"
+              className="relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl z-10"
             >
               <div className="mb-5 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-slate-900">Summon a new monster</h2>
@@ -204,11 +204,10 @@ export function TasksPage() {
                         key={opt.value}
                         type="button"
                         onClick={() => setForm((f) => ({ ...f, difficulty: opt.value }))}
-                        className={`rounded-2xl border px-3 py-2 text-center transition ${
-                          form.difficulty === opt.value
-                            ? 'border-[#17937f] bg-[#e6f7f3] text-[#17937f]'
-                            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                        }`}
+                        className={`rounded-2xl border px-3 py-2 text-center transition ${form.difficulty === opt.value
+                          ? 'border-[#17937f] bg-[#e6f7f3] text-[#17937f]'
+                          : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                          }`}
                       >
                         <span className="block text-sm font-semibold">{opt.label}</span>
                         <span className="block text-[11px] text-slate-400">{opt.hp} HP / {opt.xp} XP</span>
@@ -237,7 +236,7 @@ export function TasksPage() {
                 </Button>
               </div>
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
     </main>

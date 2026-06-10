@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type { AxiosError, AxiosInstance } from 'axios'
 import { useAuthStore } from '@/store/authStore'
+import { mockAdapter } from './mockAdapter'
 
 // Derive the API host from wherever the app is being served so it works both on
 // localhost and over the LAN (a friend opening http://<your-ip>:5173 hits http://<your-ip>:8000).
@@ -16,6 +17,7 @@ export const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
+  adapter: mockAdapter,
 })
 
 apiClient.interceptors.request.use((config) => {
