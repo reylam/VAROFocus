@@ -165,7 +165,17 @@ const DEFAULT_ROOMS: StudyRoom[] = [
         joined_at: new Date().toISOString(),
         user: DEFAULT_USER
       }
-    ]
+    ],
+    monster: {
+      id: 'monster_room_1',
+      task_id: '',
+      type: 'dragon',
+      max_hp: 500,
+      current_hp: 350,
+      image_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
   },
   {
     id: 'room_2',
@@ -191,6 +201,16 @@ const DEFAULT_ROOMS: StudyRoom[] = [
       created_at: '',
       updated_at: '',
       last_active_at: ''
+    },
+    monster: {
+      id: 'monster_room_2',
+      task_id: '',
+      type: 'slime',
+      max_hp: 100,
+      current_hp: 80,
+      image_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
   }
 ];
@@ -323,11 +343,124 @@ const DEFAULT_FRIENDS: Friend[] = [
   }
 ];
 
+const DEFAULT_FRIEND_REQUESTS: FriendRequest[] = [
+  {
+    id: 'req_1',
+    sender_id: 'user_4',
+    receiver_id: 'user_1',
+    status: 'pending',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    sender: {
+      id: 'user_4',
+      username: 'ShadowNinja',
+      email: 'ninja@varofocus.com',
+      avatar_url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=ShadowNinja',
+      level: 8,
+      xp: 220,
+      streak_count: 7,
+      title: 'Silent Shadow',
+      settings: {},
+      created_at: '',
+      updated_at: '',
+      last_active_at: ''
+    }
+  },
+  {
+    id: 'req_2',
+    sender_id: 'user_5',
+    receiver_id: 'user_1',
+    status: 'pending',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    sender: {
+      id: 'user_5',
+      username: 'CodeWizard',
+      email: 'wizard@varofocus.com',
+      avatar_url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=CodeWizard',
+      level: 12,
+      xp: 450,
+      streak_count: 14,
+      title: 'Grand Magus',
+      settings: {},
+      created_at: '',
+      updated_at: '',
+      last_active_at: ''
+    }
+  }
+];
+
+const DEFAULT_RECOMMENDED_USERS: User[] = [
+  {
+    id: 'user_6',
+    username: 'PixelWarrior',
+    email: 'pixel@varofocus.com',
+    avatar_url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=PixelWarrior',
+    level: 4,
+    xp: 90,
+    streak_count: 2,
+    title: 'Pixel Knight',
+    settings: {},
+    created_at: '',
+    updated_at: '',
+    last_active_at: ''
+  },
+  {
+    id: 'user_7',
+    username: 'TaskMaster',
+    email: 'taskmaster@varofocus.com',
+    avatar_url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=TaskMaster',
+    level: 10,
+    xp: 150,
+    streak_count: 8,
+    title: 'Efficiency Expert',
+    settings: {},
+    created_at: '',
+    updated_at: '',
+    last_active_at: ''
+  }
+];
+
 const DEFAULT_SPIN_REWARDS: SpinReward[] = [
   { id: 'spin_1', name: 'Small XP Potion', description: 'Gain 20 XP instantly', type: 'xp_boost', value: { xp: 20 }, probability: 0.4, is_active: true },
   { id: 'spin_2', name: 'Medium XP Elixir', description: 'Gain 50 XP instantly', type: 'xp_boost', value: { xp: 50 }, probability: 0.25, is_active: true },
   { id: 'spin_3', name: 'Focused Mage Title', description: 'Unlock a cool title', type: 'badge', value: { title: 'Focused Mage' }, probability: 0.1, is_active: true },
   { id: 'spin_4', name: 'Dark Mode Theme', description: 'Unlock Premium Theme', type: 'theme', value: { theme: 'dark' }, probability: 0.15, is_active: true }
+];
+
+const DEFAULT_ACTIVITY_LOGS: ActivityLog[] = [
+  {
+    id: 'act_1',
+    user_id: 'user_1',
+    type: 'task_completed',
+    message: 'Completed task "Learn React Query" and defeated the Goblin! 👺',
+    metadata: { task_id: 'task_1', xp_earned: 50 },
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+  },
+  {
+    id: 'act_2',
+    user_id: 'user_1',
+    type: 'streak_increment',
+    message: 'Maintained a 5-day focus streak! 🔥',
+    metadata: { streak: 5 },
+    created_at: new Date(Date.now() - 3600000 * 4).toISOString()
+  },
+  {
+    id: 'act_3',
+    user_id: 'user_1',
+    type: 'room_joined',
+    message: 'Joined study room "Dragon Slayers Focus" 🐉',
+    metadata: { room_id: 'room_1' },
+    created_at: new Date(Date.now() - 3600000 * 6).toISOString()
+  },
+  {
+    id: 'act_4',
+    user_id: 'user_1',
+    type: 'spin_reward',
+    message: 'Won "Small XP Potion" (+20 XP) in the Spin reward! 🔮',
+    metadata: { reward: 'Small XP Potion' },
+    created_at: new Date(Date.now() - 86400000).toISOString()
+  }
 ];
 
 // --- LOCAL STORAGE HELPERS ---
@@ -409,8 +542,24 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
   const achievements = getItem<Achievement[]>('mock_achievements', DEFAULT_ACHIEVEMENTS);
   const badges = getItem<Badge[]>('mock_badges', DEFAULT_BADGES);
   const friends = getItem<Friend[]>('mock_friends', DEFAULT_FRIENDS);
+  const friendRequests = getItem<FriendRequest[]>('mock_friend_requests', DEFAULT_FRIEND_REQUESTS);
+  const recommendedUsers = getItem<User[]>('mock_recommended_users', DEFAULT_RECOMMENDED_USERS);
   const spinRewards = getItem<SpinReward[]>('mock_spin_rewards', DEFAULT_SPIN_REWARDS);
   const pomodoroSessions = getItem<PomodoroSession[]>('mock_pomodoro_sessions', []);
+  const activityLogs = getItem<ActivityLog[]>('mock_activity_logs', DEFAULT_ACTIVITY_LOGS);
+
+  const logActivity = (type: string, message: string, metadata: any = {}) => {
+    const newLog: ActivityLog = {
+      id: 'act_' + Math.random().toString(36).substring(7),
+      user_id: user.id,
+      type,
+      message,
+      metadata,
+      created_at: new Date().toISOString()
+    };
+    activityLogs.unshift(newLog);
+    setItem('mock_activity_logs', activityLogs);
+  };
   const dailyReward = getItem<DailyReward>('mock_daily_reward', {
     id: 'dr_1',
     user_id: user.id,
@@ -493,6 +642,7 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
       
       tasks.push(newTask);
       setItem('mock_tasks', tasks);
+      logActivity('task_created', `Summoned a new monster: "${newTask.title}" (${newTask.difficulty}) ⚔️`, { task_id: id });
       return success({ message: 'Task created', task: newTask });
     }
   }
@@ -561,6 +711,7 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
       }
       setItem('mock_user', user);
       setItem('mock_tasks', tasks);
+      logActivity('task_completed', `Completed task "${task.title}" and defeated the monster! 🏆`, { task_id: id, xp_earned: task.xp_reward });
       return success({ message: 'Task completed!', task, xp_earned: task.xp_reward });
     }
     if (action === 'fail') {
@@ -595,6 +746,9 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
           user.next_level_xp = user.level * 150 + 250;
         }
         setItem('mock_user', user);
+        logActivity('task_completed', `Defeated the monster in "${task.title}"! 🏆`, { task_id: id, xp_earned: xpEarned });
+      } else {
+        logActivity('monster_attacked', `Attacked "${task.title}" dealing ${damage} damage! ⚔️`, { task_id: id, damage });
       }
       
       setItem('mock_tasks', tasks);
@@ -644,6 +798,7 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
       };
       pomodoroSessions.push(newSession);
       setItem('mock_pomodoro_sessions', pomodoroSessions);
+      logActivity('pomodoro_started', 'Started a new focus session! ⏱️');
       return success({ message: 'Session created', session: newSession });
     }
   }
@@ -671,6 +826,7 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
           if (task.current_hp === 0) {
             task.status = 'completed';
             task.completed_at = new Date().toISOString();
+            logActivity('task_completed', `Defeated the monster in "${task.title}"! 🏆`, { task_id: task.id, xp_earned: task.xp_reward });
           }
           setItem('mock_tasks', tasks);
         }
@@ -684,12 +840,14 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
       }
       setItem('mock_user', user);
       setItem('mock_pomodoro_sessions', pomodoroSessions);
+      logActivity('pomodoro_completed', 'Successfully completed a 25-minute focus session! ⏱️', { xp_earned: 25 });
       return success({ message: 'Session completed', session, xp_earned: 25 });
     }
     if (action === 'cancel') {
       session.status = 'cancelled';
       session.ended_at = new Date().toISOString();
       setItem('mock_pomodoro_sessions', pomodoroSessions);
+      logActivity('pomodoro_cancelled', 'Cancelled a focus session.');
       return success({ message: 'Session cancelled', session });
     }
   }
@@ -724,10 +882,21 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         owner: user,
-        members: [{ user_id: user.id, role: 'owner', joined_at: new Date().toISOString(), user }]
+        members: [{ user_id: user.id, role: 'owner', joined_at: new Date().toISOString(), user }],
+        monster: {
+          id: 'monster_room_' + id,
+          task_id: '',
+          type: ['slime', 'goblin', 'orc', 'dragon'][Math.floor(Math.random() * 4)] as any,
+          max_hp: 200,
+          current_hp: 200,
+          image_url: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
       };
       rooms.push(newRoom);
       setItem('mock_study_rooms', rooms);
+      logActivity('room_created', `Created a new study room: "${newRoom.name}" 🏛️`, { room_id: id });
       return success({ message: 'Study room created', room: newRoom });
     }
   }
@@ -893,13 +1062,86 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
 
   // SOCIAL / FRIENDS
   if (path === '/friends') {
-    return success(friends);
+    if (method === 'get') {
+      return success(friends);
+    }
   }
+  const deleteFriendMatch = path.match(/^\/friends\/([^/]+)$/);
+  if (deleteFriendMatch && method === 'delete') {
+    const friendId = deleteFriendMatch[1];
+    const updated = friends.filter(f => f.id !== friendId && f.friend_id !== friendId);
+    setItem('mock_friends', updated);
+    return success({ message: 'Friend removed' });
+  }
+
   if (path === '/friend-requests') {
-    return success([]);
+    if (method === 'get') {
+      return success(friendRequests);
+    }
+    if (method === 'post') {
+      const { user_id } = body;
+      const targetUser = recommendedUsers.find(u => u.id === user_id);
+      if (targetUser) {
+        const newReq: FriendRequest = {
+          id: 'req_' + Math.random().toString(36).substring(7),
+          sender_id: 'user_1',
+          receiver_id: user_id,
+          status: 'pending',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          receiver: targetUser
+        };
+        friendRequests.push(newReq);
+        setItem('mock_friend_requests', friendRequests);
+        return success({ message: 'Friend request sent', request: newReq });
+      }
+      return error('User not found', 404);
+    }
   }
   if (path === '/friend-requests/pending-count') {
-    return success({ count: 0 });
+    return success({ count: friendRequests.length });
+  }
+  const acceptRequestMatch = path.match(/^\/friend-requests\/([^/]+)\/accept$/);
+  if (acceptRequestMatch && method === 'post') {
+    const reqId = acceptRequestMatch[1];
+    const req = friendRequests.find(r => r.id === reqId);
+    if (req) {
+      const updatedReqs = friendRequests.filter(r => r.id !== reqId);
+      setItem('mock_friend_requests', updatedReqs);
+      
+      const newFriendUser = req.sender || req.receiver;
+      if (newFriendUser) {
+        const newFriend: Friend = {
+          id: 'fr_' + Math.random().toString(36).substring(7),
+          user_id: 'user_1',
+          friend_id: newFriendUser.id,
+          status: 'accepted',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          friend: newFriendUser
+        };
+        friends.push(newFriend);
+        setItem('mock_friends', friends);
+      }
+      return success({ message: 'Friend request accepted' });
+    }
+    return error('Request not found', 404);
+  }
+  const rejectRequestMatch = path.match(/^\/friend-requests\/([^/]+)\/reject$/);
+  if (rejectRequestMatch && method === 'post') {
+    const reqId = rejectRequestMatch[1];
+    const updatedReqs = friendRequests.filter(r => r.id !== reqId);
+    setItem('mock_friend_requests', updatedReqs);
+    return success({ message: 'Friend request rejected' });
+  }
+
+  if (path.startsWith('/users/search')) {
+    const q = new URLSearchParams(path.split('?')[1] || '').get('q') || '';
+    if (q) {
+      const filtered = recommendedUsers.filter(u => u.username.toLowerCase().includes(q.toLowerCase()));
+      return success(filtered);
+    }
+    return success(recommendedUsers);
   }
 
   // REWARDS / DAILY / SPIN
@@ -919,6 +1161,7 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
       user.next_level_xp = user.level * 150 + 250;
     }
     setItem('mock_user', user);
+    logActivity('daily_reward_claimed', `Claimed daily reward! Streak is now ${dailyReward.streak} days 🔥`, { streak: dailyReward.streak });
     return success({ message: 'Claimed successfully!', reward: { xp: 50 }, daily_reward: dailyReward });
   }
   if (path === '/spin-rewards') {
@@ -935,11 +1178,51 @@ export const mockAdapter = async (config: AxiosRequestConfig): Promise<AxiosResp
       }
       setItem('mock_user', user);
     }
+    logActivity('spin_reward_claimed', `Spun the wheel and won ${rolled.name}! 🎁`, { reward: rolled.name });
     return success({
       reward: rolled,
       message: `You won: ${rolled.name}!`,
       value_granted: rolled.value
     });
+  }
+
+  // ACTIVITY LOGS
+  if (path.startsWith('/activity-logs')) {
+    if (path === '/activity-logs') {
+      return success(paginated(activityLogs));
+    }
+    if (path.startsWith('/activity-logs/recent')) {
+      const limit = Number(new URLSearchParams(path.split('?')[1] || '').get('limit') || '10');
+      return success(activityLogs.slice(0, limit));
+    }
+    if (path === '/activity-logs/today') {
+      const todayLogs = activityLogs.filter(log => {
+        const date = new Date(log.created_at);
+        const today = new Date();
+        return date.getDate() === today.getDate() &&
+               date.getMonth() === today.getMonth() &&
+               date.getFullYear() === today.getFullYear();
+      });
+      return success(todayLogs);
+    }
+    if (path.startsWith('/activity-logs/weekly')) {
+      const days = Number(new URLSearchParams(path.split('?')[1] || '').get('days') || '7');
+      const limitDate = new Date(Date.now() - days * 86400000);
+      const weeklyLogs = activityLogs.filter(log => new Date(log.created_at) >= limitDate);
+      return success(weeklyLogs);
+    }
+    if (path === '/activity-logs/summary') {
+      return success({
+        total_activities: activityLogs.length,
+        today_activities: activityLogs.filter(log => {
+          const date = new Date(log.created_at);
+          const today = new Date();
+          return date.getDate() === today.getDate() &&
+                 date.getMonth() === today.getMonth() &&
+                 date.getFullYear() === today.getFullYear();
+        }).length
+      });
+    }
   }
 
   // Fallback for unhandled endpoints

@@ -115,6 +115,23 @@ function RoomLobby({ room, stats, onClose }: RoomLobbyProps) {
   const startSession = useStartStudyRoomSession()
   const endSession = useEndStudyRoomSession()
 
+  const mConfig = useMemo(() => {
+    if (!room.monster) return null
+    const type = room.monster.type
+    switch (type) {
+      case 'slime':
+        return { emoji: '🟢', color: 'from-emerald-400 to-teal-500', name: 'Study Slime', hp: room.monster.current_hp, maxHp: room.monster.max_hp }
+      case 'goblin':
+        return { emoji: '👺', color: 'from-amber-400 to-orange-500', name: 'Lobby Goblin', hp: room.monster.current_hp, maxHp: room.monster.max_hp }
+      case 'orc':
+        return { emoji: '👹', color: 'from-red-400 to-rose-600', name: 'Orc Overlord', hp: room.monster.current_hp, maxHp: room.monster.max_hp }
+      case 'dragon':
+        return { emoji: '🐉', color: 'from-purple-500 to-indigo-600', name: 'Apex Red Dragon', hp: room.monster.current_hp, maxHp: room.monster.max_hp }
+      default:
+        return { emoji: '👾', color: 'from-slate-400 to-slate-600', name: 'Room Spirit', hp: room.monster.current_hp, maxHp: room.monster.max_hp }
+    }
+  }, [room.monster])
+
   const handleLeave = () => {
     if (!room.id) return
 
@@ -216,6 +233,36 @@ function RoomLobby({ room, stats, onClose }: RoomLobbyProps) {
             )}
           </div>
         </div>
+
+        {mConfig && (
+          <Card className="relative overflow-hidden border border-rose-100 bg-rose-50/20 p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className={clsx(
+                "flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br shadow-lg text-4xl animate-bounce",
+                mConfig.color
+              )}>
+                {mConfig.emoji}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-semibold text-rose-700">Room Boss</span>
+                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">{room.monster?.type}</span>
+                </div>
+                <h4 className="mt-1 text-xl font-bold text-slate-900">{mConfig.name}</h4>
+                <div className="mt-3 flex items-center justify-between text-xs text-slate-500 font-semibold">
+                  <span>HEALTH POINTS</span>
+                  <span>{mConfig.hp}/{mConfig.maxHp} HP</span>
+                </div>
+                <div className="mt-1.5 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-red-500 to-rose-600 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.max(0, Math.min(100, (mConfig.hp / mConfig.maxHp) * 100))}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
 
         <Card>
           <div className="flex items-center justify-between">

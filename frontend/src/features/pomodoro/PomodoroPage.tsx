@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Pause, Play, RotateCcw } from 'lucide-react'
+import { Pause, Play, RotateCcw, Swords } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import useUiStore from '../../store/uiStore'
-import { useTasks } from '../../hooks/useTaskHooks'
+import { useTasks, useAttackMonster } from '../../hooks/useTaskHooks'
+import useTaskStore from '../../store/taskStore'
 import {
   cancelPomodoroSession,
   completePomodoroSession,
@@ -39,6 +40,35 @@ export function PomodoroPage() {
     () => (tasksResponse?.data ?? []).filter((t) => t.status !== 'completed' && t.status !== 'failed'),
     [tasksResponse],
   )
+
+  const selectedTask = useMemo(() => activeTasks.find((t) => t.id === taskId), [activeTasks, taskId])
+
+  const attackMutation = useAttackMonster()
+  const setAttacking = useTaskStore((s) => s.setAttacking)
+  const attackingTaskId = useTaskStore((s) => s.attackingTaskId)
+  const isAttacking = !!selectedTask && attackingTaskId === selectedTask.id
+
+  const handleAttack = () => {
+    if (!selectedTask) return
+    setAttacking(selectedTask.id)
+    
+    attackMutation.mutate(
+      { id: selectedTask.id, damage: 25, source: 'manual' },
+      {
+        onSuccess: (res) => {
+          const payload = (res as { data?: { is_dead?: boolean; task_completed?: boolean; xp_earned?: number } })?.data
+          if (payload?.is_dead || payload?.task_completed) {
+            addToast({ title: 'Monster defeated!', description: `You earned ${payload?.xp_earned ?? 0} XP.`, variant: 'success' })
+            queryClient.invalidateQueries({ queryKey: ['tasks'] })
+          } else {
+            addToast({ title: 'Hit landed', description: '-25 HP.', variant: 'info' })
+          }
+        },
+        onError: () => addToast({ title: 'Attack failed', description: 'Try again in a moment.', variant: 'warning' }),
+        onSettled: () => setAttacking(null),
+      }
+    )
+  }
 
   const { data: stats } = useQuery({
     queryKey: ['pomodoro-today'],
@@ -132,8 +162,6 @@ export function PomodoroPage() {
   const todayMinutes = stats?.total_minutes ?? 0
   const todayXp = stats?.xp_earned ?? 0
 
-  const selectedTask = activeTasks.find((t) => t.id === taskId)
-
   const mConfig = useMemo(() => {
     if (selectedTask) {
       const rawMonster = selectedTask.monster
@@ -225,7 +253,9 @@ export function PomodoroPage() {
                 <div className="flex items-center gap-4 w-full">
                   <motion.div
                     animate={
-                      status === 'running'
+                      isAttacking
+                        ? { x: [0, -8, 8, -6, 6, 0] }
+                        : status === 'running'
                         ? {
                             y: [0, -12, 0],
                             scale: [1, 1.08, 1],
@@ -235,11 +265,15 @@ export function PomodoroPage() {
                             scale: [1, 1.02, 1],
                           }
                     }
-                    transition={{
-                      repeat: Infinity,
-                      duration: status === 'running' ? 0.8 : 2.0,
-                      ease: 'easeInOut',
-                    }}
+                    transition={
+                      isAttacking
+                        ? { duration: 0.6, ease: 'easeOut' }
+                        : {
+                            repeat: Infinity,
+                            duration: status === 'running' ? 0.8 : 2.0,
+                            ease: 'easeInOut',
+                          }
+                    }
                     className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${mConfig.color} shadow-md text-3xl`}
                   >
                     {mConfig.emoji}
@@ -258,6 +292,19 @@ export function PomodoroPage() {
                       />
                     </div>
                   </div>
+
+                  {selectedTask && mConfig.hp > 0 && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleAttack}
+                      disabled={isAttacking}
+                      className="shrink-0 flex h-10 w-10 items-center justify-center p-0 rounded-xl bg-orange-50 hover:bg-orange-100 border-orange-200 text-orange-600"
+                      title="Attack Monster"
+                    >
+                      <Swords size={18} />
+                    </Button>
+                  )}
                 </div>
               </motion.div>
             )}
