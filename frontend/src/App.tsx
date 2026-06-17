@@ -7,7 +7,7 @@ import { TasksPage } from './features/tasks/TasksPage'
 import { PomodoroPage } from './features/pomodoro/PomodoroPage'
 import { LeaderboardPage } from './features/leaderboard/LeaderboardPage'
 import { AchievementsPage } from './features/achievements/AchievementsPage'
-import { StudyRoomsPage } from './features/studyRooms/StudyRoomsPage'
+import { StudyRoomDetailPage, StudyRoomsPage } from './features/studyRooms/StudyRoomsPage'
 import { ProtectedRoute } from './pages/ProtectedRoute'
 import { FriendsPage } from './features/friends/FriendsPage'
 
@@ -30,6 +30,7 @@ function App() {
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/study-rooms" element={<StudyRoomsPage />} />
+        <Route path="/study-rooms/:id" element={<StudyRoomDetailPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
       <Route path="/*" element={<Navigate to="/login" replace />} />
